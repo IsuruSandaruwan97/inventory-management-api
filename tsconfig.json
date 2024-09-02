@@ -17,6 +17,13 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-
+    "esModuleInterop": true,
+    "paths": {
+      "@modules/*": ["src/modules/*"],
+      "@filters/*": ["src/filters/*"],
+      "@services/*": ["src/services/*"],
+      "@configs/*": ["src/configs/*"],
+      "@constants/*": ["src/configs/constants/*"]
+    }
   }
 }
