@@ -5,6 +5,7 @@ import { PrismaService } from '@services/prisma.service';
 import { Users } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
+import { hashPassword } from '@utils/bcrypt.util';
 
 @Injectable()
 export class UsersService {
@@ -29,29 +30,34 @@ export class UsersService {
       email: payload.email,
       role: payload.role,
       status: !!payload.status,
-      password: payload.password,
+      password: payload?.password?hashPassword(payload.password): null,
       tmp_password: null,
-      pin_code:payload.pin_code || null
+      pin_code:payload.pin_code || null,
+      tokens:[],
+      refresh_tokens:[]
     };
     return this.prismaService.users.create({ data });
   }
 
   async updateUser( payload:Partial<Users>): Promise<Users> {
-    const user = await this.findUserById(payload.id);
+    const { id, pin_code, password, tmp_password, tokens, refresh_tokens, ...userData } = await this.findUserById(payload.id);
+    const newPayload = { ...userData, ...payload };
+
     return this.prismaService.users.update({
-      where: { id: payload.id }, data: { ...user,...payload },
+      where: { id: payload.id },
+      data: newPayload,
     });
   }
 
   async findUser(mobile: string): Promise<Users> {
-    return this.prismaService.users.findFirst({ where: { mobile } });
-
+    return this.prismaService.users.findFirst({ where: { mobile } }); 
   }
 
   async findUserById(uuid: string): Promise<Users> {
       if(!uuidValidate(uuid))throw new HttpException(ERROR_MESSAGES.USERS.INVALID_USER_ID,HttpStatus.NOT_ACCEPTABLE);
       const user = await this.prismaService.users.findFirst({ where: { id: uuid } });
       if (!user) throw new HttpException(ERROR_MESSAGES.USERS.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-      return user; 
+      return user;
   }
+
 }

@@ -36,4 +36,8 @@ export class CreateUserDto {
   @ApiProperty()
   @IsOptional()
   pin_code?:string;
+
+  tokens?: string[];
+
+  refresh_tokens?: string[];
 }

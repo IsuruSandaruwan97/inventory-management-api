@@ -14,14 +14,16 @@ datasource db {
 }
 
 model Users {
-  id           String  @id @default(uuid()) @db.Uuid
-  emp_id       String  @unique @map("emp_id")
-  name         String  @map("name")
-  mobile       String  @unique @map("mobile")
-  email        String? @unique @map("email")
-  role         String  @map("role")
-  status       Boolean @map("status")
-  password     String? @map("password")
-  tmp_password String? @map("tmp_password")
-  pin_code     String? @map("pin_code")
+  id             String  @id @default(uuid()) @db.Uuid
+  emp_id         String  @unique @map("emp_id")
+  name           String  @map("name")
+  mobile         String  @unique @map("mobile")
+  email          String? @unique @map("email")
+  role           String  @map("role")
+  status         Boolean @map("status")
+  password       String? @map("password")
+  tmp_password   String? @map("tmp_password")
+  pin_code       String? @map("pin_code")
+  tokens         Json?   @map("tokens")
+  refresh_tokens Json?   @map("refresh_tokens")
 }

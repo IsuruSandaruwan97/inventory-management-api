@@ -23,7 +23,8 @@
       "@filters/*": ["src/filters/*"],
       "@services/*": ["src/services/*"],
       "@configs/*": ["src/configs/*"],
-      "@constants/*": ["src/configs/constants/*"]
+      "@constants/*": ["src/configs/constants/*"],
+      "@utils/*": ["src/utils/*"]
     }
   }
 }
