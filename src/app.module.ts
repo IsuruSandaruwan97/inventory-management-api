@@ -8,12 +8,13 @@ import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { JwtMiddleware } from './middlewares/jwt.middleware';
+import { CategoriesModule } from '@modules/categories/categories.module';
 
 
 @Module({
-  imports: [ UsersModule, AuthModule],
+  imports: [ UsersModule, AuthModule, CategoriesModule],
   controllers: [AppController],
-  providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService],
+  providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService], 
 })
 export class AppModule implements NestModule {configure(consumer: MiddlewareConsumer) {
   consumer

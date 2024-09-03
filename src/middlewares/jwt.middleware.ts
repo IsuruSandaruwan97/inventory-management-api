@@ -9,6 +9,7 @@ export class JwtMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService,private readonly authService: AuthService) {
   }
   async use(req: any, res: any, next: () => void) {
+    
     const token = this.extractTokenFromHeader(req);
     if (!token) throw new UnauthorizedException(ERROR_MESSAGES.UNAUTHORIZED);
     const data = await this.verifyToken(token);
