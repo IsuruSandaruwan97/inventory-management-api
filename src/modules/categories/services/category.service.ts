@@ -35,7 +35,7 @@ export class CategoryService {
 
   async getCategoryById(id: number): Promise<Category> {
     const existingCategory = await this.prismaService.category.findFirst({
-      where: { id},
+      where: {id},
     });
     if(!existingCategory) throw new HttpException(ERROR_MESSAGES.CATEGORIES.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
     return existingCategory
