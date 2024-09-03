@@ -1,10 +1,23 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PrismaService } from '@services/prisma.service';
+import { ErrorHandlerService } from '@services/error-hander.service';
+import { ResponseHandlerService } from '@services/response-handler.service';
+import { UsersModule } from '@modules/users/users.module';
+import { AuthModule } from '@modules/auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
+import { JwtMiddleware } from './middlewares/jwt.middleware';
+
 
 @Module({
-  imports: [],
+  imports: [ UsersModule, AuthModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {configure(consumer: MiddlewareConsumer) {
+  consumer
+    .apply(JwtMiddleware)
+    .exclude('auth/(.*)')
+    .forRoutes('*');
+}}
