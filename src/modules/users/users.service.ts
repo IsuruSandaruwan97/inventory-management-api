@@ -5,19 +5,22 @@ import { PrismaService } from '@services/prisma.service';
 import { Users } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
-import { hashPassword } from '@utils/bcrypt.util';
+import { hashPassword } from '@utils/encryption.util';
+import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
+import { UserList } from '@modules/users/interfaces/user-list.interface';
+import { UserListDto } from '@modules/users/dto/user-list.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private prismaService: PrismaService) {
   }
 
-  async fetchUsers(): Promise<Users[]> {
+  async fetchUsers(): Promise<UserList[]> {
     const users = await this.prismaService.users.findMany();
     if (isEmpty(users)) {
       throw new HttpException(ERROR_MESSAGES.USERS.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
-    return users;
+    return users?.map((user:Users)=>(new UserListDto(user)));
   }
 
   async createUser(payload: CreateUserDto): Promise<Users> {
@@ -28,24 +31,23 @@ export class UsersService {
       name: payload.name,
       mobile: payload.mobile,
       email: payload.email,
+      address:payload.address||null,
       role: payload.role,
       status: !!payload.status,
       password: payload?.password?hashPassword(payload.password): null,
       tmp_password: null,
       pin_code:payload.pin_code || null,
       tokens:[],
-      refresh_tokens:[]
+      refresh_tokens:[],
     };
     return this.prismaService.users.create({ data });
   }
 
-  async updateUser( payload:Partial<Users>): Promise<Users> {
-    const { id, pin_code, password, tmp_password, tokens, refresh_tokens, ...userData } = await this.findUserById(payload.id);
-    const newPayload = { ...userData, ...payload };
-
+  async updateUser( payload:UpdateUserDto): Promise<Users> {
+    const userData = await this.findUserById(payload.id);
     return this.prismaService.users.update({
       where: { id: payload.id },
-      data: newPayload,
+      data: { ...userData, ...payload },
     });
   }
 

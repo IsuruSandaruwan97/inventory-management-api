@@ -1,4 +1,9 @@
 export const ERROR_MESSAGES = {
+  UNAUTHORIZED: 'You are not authorized to access this feature',
+  AUTHENTICATION: {
+    INVALID_CREDENTIALS: 'Invalid Credentials',
+    MAX_LOGIN_ATTEMPTS_REACHED:'Maximum login attempts reached!'
+  },
   USERS:{
     INVALID_USER_ID:'Invalid User ID!',
     USER_NOT_FOUND: 'User Not Found!',

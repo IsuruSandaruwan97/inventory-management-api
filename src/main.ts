@@ -8,9 +8,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
-
+  app.enableCors()
   const options = new DocumentBuilder()
-    .addBearerAuth()
+    .addBearerAuth( ).addSecurityRequirements('bearer')
     .setTitle('Nest-js Swagger Example API')
     .setDescription('Swagger Example API API description')
     .setVersion('1.0')

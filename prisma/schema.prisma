@@ -19,6 +19,7 @@ model Users {
   name           String  @map("name")
   mobile         String  @unique @map("mobile")
   email          String? @unique @map("email")
+  address        String? @default("") @map("address")
   role           String  @map("role")
   status         Boolean @map("status")
   password       String? @map("password")
@@ -26,4 +27,5 @@ model Users {
   pin_code       String? @map("pin_code")
   tokens         Json?   @map("tokens")
   refresh_tokens Json?   @map("refresh_tokens")
+  login_attempts Int?    @default(0) @map("login_attempts")
 }

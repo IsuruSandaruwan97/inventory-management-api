@@ -4,8 +4,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';
 import { ResponseHandlerService } from '@services/response-handler.service';
-import { Users } from '@prisma/client';
 import { ApiResponseType } from '@configs/types/api-response.type';
+import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -18,7 +18,7 @@ export class UsersController {
   ) {
   }
   @Get()
-  async get():Promise<ApiResponseType> {
+  async get( ):Promise<ApiResponseType> {
     return this.responseHandlerService.successResponse(await this.userService.fetchUsers(), 'Users found');
   }
 
@@ -28,7 +28,7 @@ export class UsersController {
   }
 
   @Put()
-  async update(@Body() data:Partial<Users>):Promise<ApiResponseType> {
+  async update(@Body() data:UpdateUserDto):Promise<ApiResponseType> {
     return this.responseHandlerService.successResponse(await this.userService.updateUser(data),'User updated successfully');
   }
 
