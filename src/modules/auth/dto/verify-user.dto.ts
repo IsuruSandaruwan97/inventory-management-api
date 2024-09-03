@@ -1,6 +1,7 @@
 import { Users } from '@prisma/client';
 
 export class VerifyUserDto {
+  id:string;
   emp_id:string;
   name:string;
   mobile :string;
@@ -8,6 +9,7 @@ export class VerifyUserDto {
   role :string;
   status:boolean
   constructor(user:Partial<Users>) {
+    this.id = user.id;
     this.emp_id = user.emp_id;
     this.name = user.name;
     this.mobile = user.mobile;

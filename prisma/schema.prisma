@@ -28,4 +28,26 @@ model Users {
   tokens         Json?   @map("tokens")
   refresh_tokens Json?   @map("refresh_tokens")
   login_attempts Int?    @default(0) @map("login_attempts")
+
+  categoriesCreated Category[] @relation("CreatedByRelation")
+  categoriesUpdated Category[] @relation("UpdatedByRelation")
+
+  @@map("users")
+}
+
+model Category {
+  id        Int       @id @unique @default(autoincrement())
+  name      String    @map("name")
+  code      String    @unique @map("code")
+  status    Boolean   @map("status")
+  type      Json      @map("type")
+  createdBy String    @db.Uuid
+  updatedBy String?   @db.Uuid
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  creator Users  @relation("CreatedByRelation", fields: [createdBy], references: [id])
+  updater Users? @relation("UpdatedByRelation", fields: [updatedBy], references: [id])
+
+  @@map("category")
 }

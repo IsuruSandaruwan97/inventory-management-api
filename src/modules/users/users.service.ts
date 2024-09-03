@@ -39,6 +39,7 @@ export class UsersService {
       pin_code:payload.pin_code || null,
       tokens:[],
       refresh_tokens:[],
+      login_attempts:0
     };
     return this.prismaService.users.create({ data });
   }

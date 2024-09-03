@@ -8,5 +8,9 @@ export const ERROR_MESSAGES = {
     INVALID_USER_ID:'Invalid User ID!',
     USER_NOT_FOUND: 'User Not Found!',
     USER_ALREADY_EXISTS: 'User Already Available!',
+  },
+  CATEGORIES:{
+    CATEGORY_NOT_FOUND: 'Category Not Found!',
+    ALREADY_EXISTS: 'Category already exists!',
   }
 }

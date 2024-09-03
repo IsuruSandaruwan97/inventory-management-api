@@ -4,6 +4,7 @@ export interface UserLoginInterface {
 }
 
 export interface VerifyUserInterface {
+  id:string;
   emp_id:string;
   name:string;
   mobile :string;
