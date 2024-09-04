@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Put, UseFilters } from '@nestjs/common';
-import { HttpExceptionFilter } from '@filters/http-exception.filter';
+import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';

@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '@filters/http-exception.filter';
+import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import * as process from 'node:process';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,8 +25,8 @@ async function bootstrap() {
       tagsSorter: 'alpha',
       operationsSorter: 'alpha',
     },
-  });
-  await app.listen(3000);
+  }); 
+  await app.listen(parseInt(process.env?.PORT)||3000);
 }
 
 bootstrap();

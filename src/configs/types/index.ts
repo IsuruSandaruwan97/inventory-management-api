@@ -1,4 +1,4 @@
-import { CommonFilterDto } from '../../dto/index.dto';
+import { CommonFilterDto } from '@common/dto/index.dto';
 
 export type TGetFilterProps = {
   filters: CommonFilterDto;

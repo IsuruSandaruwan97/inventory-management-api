@@ -14,10 +14,11 @@ import { StockModule } from '@modules/stock/stock.module';
 import { LoggingInterceptor } from '@common/interceptors/logging.Interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { TransactionsModule } from '@modules/transactions/transactions.module';
 
 
 @Module({
-  imports: [ UsersModule, AuthModule, CategoriesModule, StockModule, CommonModule],
+  imports: [ UsersModule, AuthModule, CategoriesModule, StockModule, CommonModule, TransactionsModule],
   controllers: [AppController],
   providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService,ConfigService,{
     provide: APP_INTERCEPTOR,

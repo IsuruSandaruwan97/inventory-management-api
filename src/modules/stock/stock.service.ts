@@ -3,7 +3,7 @@ import { PrismaService } from '@services/prisma.service';
 import { CreateItemDto } from '@modules/stock/dto/create-stock-item.dto';
 import { StockItems } from '@prisma/client';
 import { UpdateStockItemDto } from '@modules/stock/dto/update-stock-item.dto';
-import { CommonFilterDto } from '../../dto/index.dto';
+import { CommonFilterDto } from '@common/dto/index.dto';
 import { getFilters } from '../../common/utils/index.util';
 
 @Injectable()

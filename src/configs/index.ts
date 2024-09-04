@@ -1,0 +1,1 @@
+export const JWT_EXCLUDED_ROUTES:string[] = ['/']
