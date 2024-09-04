@@ -6,7 +6,7 @@ import * as process from 'node:process';
 import { UserLoginInterface, VerifyUserInterface } from '@modules/auth/interfaces/auth.interface';
 import { PrismaService } from '@services/prisma.service';
 import { manageTokens } from '@modules/auth/utils/auth.utils';
-import { checkPassword } from '@utils/encryption.util';
+import { checkPassword } from '../../common/utils/encryption.util';
 import { VerifyUserDto } from '@modules/auth/dto/verify-user.dto';
 
 @Injectable()

@@ -34,6 +34,7 @@ model Users {
   subCategoryCreated SubCategory[] @relation("UsersSubCategoryCreatedBy")
   subCategoryUpdated SubCategory[] @relation("UsersSubCategoryUpdatedBy")
   stockItemUpdated   StockItems[]  @relation("UsersStockItemUpdatedBy")
+  ActivityLog        ActivityLog[] @relation("ActivityLogUserRelation")
 
   @@map("users")
 }
@@ -97,4 +98,16 @@ model StockItems {
   itemSubCategory SubCategory? @relation("ItemSubCategoryRelation", fields: [sub_category], references: [id])
 
   @@map("stock_items")
+}
+
+model ActivityLog {
+  id          Int      @id @unique @default(autoincrement())
+  method      String
+  path        String
+  description Json?
+  userId      String?  @db.Uuid
+  createdAt   DateTime @default(now())
+  user        Users?   @relation("ActivityLogUserRelation", fields: [userId], references: [id])
+
+  @@map("activity_log")
 }
