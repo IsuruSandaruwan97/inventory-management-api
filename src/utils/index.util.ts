@@ -1,13 +1,26 @@
-import { CommonFilterDto } from '../dto/index.dto';
+import { TGetFilter, TGetFilterProps } from '@configs/types';
 
-export const getFilters = (filters: CommonFilterDto): {
-  search: string;
-  limit: number;
-  skip: number;
-  from: { gte: Date };
-  to: { lte:Date }
-} => {
+export const getFilters = ({
+                             filters, searchKeys,
+                             dateField = 'createdAt',
+                             sort = 'id', sortType = 'desc',
+                           }: TGetFilterProps): TGetFilter => {
   const { page = 1, limit = 10, search, from, to } = filters;
   const skip = (page - 1) * limit;
-  return {limit,skip,search, ...(from && {from: { gte:new Date(from) }}), ...(to && {to:{lte:new Date(to)}})};
-}
+
+  const where: any = {
+    ...(from && to && { [dateField]: { gte: from, lte: to } }),
+    ...(search && searchKeys?.length && {
+      OR: searchKeys.map(key => ({
+        [key]: { contains: search, mode: 'insensitive' },
+      })),
+    }),
+  };
+
+  return {
+    take: limit,
+    skip,
+    where,
+    orderBy: { [sort]: sortType },
+  };
+};

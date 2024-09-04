@@ -13,9 +13,8 @@ export class StockService {
   }
 
   async fetchItems(payload:CommonFilterDto):Promise<StockItems[]> {
-    const filters = getFilters(payload)
-    console.log(filters)
-    return this.prismaService.stockItems.findMany({skip:1,take:1});
+    const filters = getFilters({ filters:payload,searchKeys:['name','code'] });
+    return this.prismaService.stockItems.findMany(filters);
   }
 
   async createItem(data:CreateItemDto):Promise<StockItems> {
