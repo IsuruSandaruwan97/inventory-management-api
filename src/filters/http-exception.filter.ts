@@ -9,6 +9,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
     const { status,message } = this.getExceptionDetails(exception)
     const errorResponse = {
       statusCode: status,
@@ -22,15 +23,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private getExceptionDetails(exception: any):{status:number,message:string|object} {
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
-
-    if (exception instanceof HttpException) {
-      message = exception.message;
-      status = exception.getStatus()
-    }
+    let status =   HttpStatus.INTERNAL_SERVER_ERROR;
+    let message :string|object = 'Internal server error';
     const exceptionCode = exception.code;
-    if (
+    if(exception instanceof HttpException){
+      status = exception?.getStatus()
+      message = exception?.getResponse() || exception.message
+    }
+    else if (
       exception instanceof Prisma.PrismaClientKnownRequestError ||
       exception instanceof Prisma.PrismaClientUnknownRequestError ||
       exception instanceof Prisma.PrismaClientRustPanicError ||

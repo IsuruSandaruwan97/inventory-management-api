@@ -8,7 +8,7 @@ import { SubCategory } from '@prisma/client';
 export class SubCategoryService {
   constructor(private readonly prismaService: PrismaService) {
   }
-  async fetchSubCategories(category:string):Promise<SubCategory[]> {
+  async fetchSubCategories(category:number):Promise<SubCategory[]> {
     return this.prismaService.subCategory.findMany({where:{category}});
   }
 

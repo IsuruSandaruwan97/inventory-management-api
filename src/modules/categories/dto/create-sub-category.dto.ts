@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateSubCategoryDto {
   @ApiProperty()
@@ -14,8 +14,8 @@ export class CreateSubCategoryDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  category: string;
+  @IsInt()
+  category: number;
 
   @ApiProperty()
   @IsNotEmpty()
