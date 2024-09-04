@@ -9,10 +9,12 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { JwtMiddleware } from './middlewares/jwt.middleware';
 import { CategoriesModule } from '@modules/categories/categories.module';
+import { CommonModule } from './common.module';
+import { StockModule } from '@modules/stock/stock.module';
 
 
 @Module({
-  imports: [ UsersModule, AuthModule, CategoriesModule],
+  imports: [ UsersModule, AuthModule, CategoriesModule, StockModule, CommonModule],
   controllers: [AppController],
   providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService], 
 })
