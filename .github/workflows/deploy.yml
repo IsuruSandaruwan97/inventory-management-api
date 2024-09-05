@@ -23,21 +23,10 @@ jobs:
           script: |
             cd /root/inventory-management-api
             git pull origin master
-             # Install yarn if not available
-            if ! command -v yarn &> /dev/null
-            then
-              echo "Yarn not found. Installing yarn..."
-              npm install -g yarn
-            fi
-
-            # Install pm2 if not available
-            if ! command -v pm2 &> /dev/null
-            then
-              echo "PM2 not found. Installing pm2..."
-              npm install -g pm2
-            fi
-            yarn install --frozen-lockfile
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            npm install
             npx prisma migrate deploy
-            yarn build
+            npm run build
             pm2 restart all  # Or the command to restart your application
 
