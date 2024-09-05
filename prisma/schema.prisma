@@ -29,11 +29,14 @@ model Users {
   refresh_tokens Json?   @map("refresh_tokens")
   login_attempts Int?    @default(0) @map("login_attempts")
 
-  categoriesCreated  Category[]    @relation("UsersCategoryCreatedBy")
-  categoriesUpdated  Category[]    @relation("UsersCategoryUpdatedBy")
-  subCategoryCreated SubCategory[] @relation("UsersSubCategoryCreatedBy")
-  subCategoryUpdated SubCategory[] @relation("UsersSubCategoryUpdatedBy")
-  stockItemUpdated   StockItems[]  @relation("UsersStockItemUpdatedBy")
+  categoriesCreated  Category[]     @relation("UsersCategoryCreatedBy")
+  categoriesUpdated  Category[]     @relation("UsersCategoryUpdatedBy")
+  subCategoryCreated SubCategory[]  @relation("UsersSubCategoryCreatedBy")
+  subCategoryUpdated SubCategory[]  @relation("UsersSubCategoryUpdatedBy")
+  stockItemUpdated   StockItems[]   @relation("UsersStockItemUpdatedBy")
+  ActivityLog        ActivityLog[]  @relation("ActivityLogUserRelation")
+  ItemRequests       ItemRequests[] @relation("ItemRequestUserRelation")
+  ItemActionTakenBy  ItemRequests[] @relation("ActionTakenByRelation")
 
   @@map("users")
 }
@@ -91,10 +94,48 @@ model StockItems {
   updatedBy     String?   @db.Uuid
   updatedAt     DateTime?
   createdAt     DateTime  @default(now())
+  status        Boolean   @default(true)
 
-  updater         Users?       @relation("UsersStockItemUpdatedBy", fields: [updatedBy], references: [id])
-  itemCategory    Category     @relation("ItemCategoryRelation", fields: [category], references: [id])
-  itemSubCategory SubCategory? @relation("ItemSubCategoryRelation", fields: [sub_category], references: [id])
+  updater         Users?         @relation("UsersStockItemUpdatedBy", fields: [updatedBy], references: [id])
+  itemCategory    Category       @relation("ItemCategoryRelation", fields: [category], references: [id])
+  itemSubCategory SubCategory?   @relation("ItemSubCategoryRelation", fields: [sub_category], references: [id])
+  ItemRequests    ItemRequests[] @relation("StockItemIdRelation")
 
   @@map("stock_items")
+}
+
+model ActivityLog {
+  id          Int      @id @unique @default(autoincrement())
+  method      String
+  path        String
+  description Json?
+  userId      String?  @db.Uuid
+  createdAt   DateTime @default(now())
+  user        Users?   @relation("ActivityLogUserRelation", fields: [userId], references: [id])
+
+  @@map("activity_log")
+}
+
+model ItemRequests {
+  id            Int       @id @unique @default(autoincrement())
+  request_id    String
+  item_id       Int       @map("item_id")
+  quantity      Int
+  note          String?
+  remark        String?
+  reject_reason String?
+  status        Int // 1 for pending,2 for accept, 0 for rejected
+  type          String
+  userId        String?   @map("userId") @db.Uuid
+  user_role     Int       @default(1)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?
+  action_taken  String?   @db.Uuid
+  action_date   DateTime?
+
+  user        Users?     @relation("ItemRequestUserRelation", fields: [userId], references: [id])
+  stockItem   StockItems @relation("StockItemIdRelation", fields: [item_id], references: [id])
+  actionTaken Users?     @relation("ActionTakenByRelation", fields: [action_taken], references: [id])
+
+  @@map("item_requests")
 }

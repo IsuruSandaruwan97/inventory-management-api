@@ -2,14 +2,15 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import { PRISMA_ERROR_MESSAGES } from '@constants/errors.constants';
+import { APP_ENVS } from '@configs/index';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-
+    const request = ctx.getRequest<Request>(); 
     const { status,message } = this.getExceptionDetails(exception)
     const errorResponse = {
       statusCode: status,
@@ -18,7 +19,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       method: request.method,
       message: typeof message === 'string' ? message : (message as any).message,
     };
-    console.error(`\x1b[31m ${JSON.stringify(errorResponse)} \x1b[0m`) 
+    if(process.env.ENV?.toLowerCase() === APP_ENVS.DEVELOPMENT)console.error(exception);
+    console.error(`\x1b[31m ${JSON.stringify(errorResponse)} \x1b[0m`)
     response.status(status).json(errorResponse);
   }
 
