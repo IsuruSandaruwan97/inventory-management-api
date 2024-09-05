@@ -6,7 +6,7 @@ import * as process from 'node:process';
 import { UserLoginInterface, VerifyUserInterface } from '@modules/auth/interfaces/auth.interface';
 import { PrismaService } from '@services/prisma.service';
 import { manageTokens } from '@modules/auth/utils/auth.utils';
-import { checkPassword } from '../../common/utils/encryption.util';
+import { checkPassword } from '@common/utils/encryption.util';
 import { VerifyUserDto } from '@modules/auth/dto/verify-user.dto';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class AuthService {
   }
   async userLogin( username: string, password: string):Promise<UserLoginInterface> {
     const user = await this.usersService.findUser(username);
-    if(!user || !user.status)throw new HttpException(ERROR_MESSAGES.AUTHENTICATION.INVALID_CREDENTIALS,HttpStatus.NOT_FOUND);
+    if(!user || !user.status)throw new HttpException(ERROR_MESSAGES.AUTHENTICATION.INVALID_CREDENTIALS,HttpStatus.NOT_ACCEPTABLE);
     if(user.login_attempts>5) throw new HttpException(ERROR_MESSAGES.AUTHENTICATION.MAX_LOGIN_ATTEMPTS_REACHED,HttpStatus.UNAUTHORIZED)
 
     if(!checkPassword(password, user.password)) {
