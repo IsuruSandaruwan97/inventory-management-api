@@ -13,11 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20.15.1'
-
         env:
           PORT: ${{ vars.PORT }}
           ENV: ${{ vars.ENV }}
@@ -37,7 +32,7 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             cd /root/inventory-management-api
-            git pull origin main
+            git pull origin master
             yarn install --frozen-lockfile
             npx prisma migrate deploy
             yarn build
