@@ -36,7 +36,7 @@ jobs:
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            cd /root/inventory
+            cd /root/inventory-management-api
             git pull origin main
             yarn install --frozen-lockfile
             npx prisma migrate deploy
