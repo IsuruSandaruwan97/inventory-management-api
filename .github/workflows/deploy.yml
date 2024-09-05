@@ -18,6 +18,16 @@ jobs:
         with:
           node-version: '20.15.1'
 
+        env:
+          PORT: ${{ vars.PORT }}
+          ENV: ${{ vars.ENV }}
+          TZ: ${{ vars.TZ }}
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
+          JWT_SECRET: ${{ vars.JWT_SECRET }}
+          JWT_TOKEN_VALIDITY: ${{ vars.JWT_TOKEN_VALIDITY }}
+          REFRESH_TOKEN_VALIDITY: ${{ vars.REFRESH_TOKEN_VALIDITY }}
+          LOGGING_ENABLE: ${{ vars.LOGGING_ENABLE }}
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
