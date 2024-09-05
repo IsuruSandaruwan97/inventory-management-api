@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - master  # Adjust based on the branch you want to trigger the deployment
+      - master
 
 jobs:
   deploy:
@@ -13,23 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20.15.1'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma client
-        run: npx prisma generate
-
-      - name: Run Prisma migrations
-        run: npx prisma migrate deploy
-
-      - name: Build application
-        run: npm run build
-
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -38,9 +21,11 @@ jobs:
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            cd /root/inventory
-            git pull origin main
-            npm ci
+            cd /root/inventory-management-api
+            git pull origin master
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            npm install
             npx prisma migrate deploy
             npm run build
             pm2 restart all  # Or the command to restart your application
