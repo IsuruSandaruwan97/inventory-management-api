@@ -7,13 +7,23 @@ import { ResponseHandlerService } from '@services/response-handler.service';
 import { UsersModule } from '@modules/users/users.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
-import { JwtMiddleware } from './middlewares/jwt.middleware';
+import { JwtMiddleware } from '@common/middlewares/jwt.middleware';
+import { CategoriesModule } from '@modules/categories/categories.module';
+import { CommonModule } from './common.module';
+import { StockModule } from '@modules/stock/stock.module';
+import { LoggingInterceptor } from '@common/interceptors/logging.Interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { TransactionsModule } from '@modules/transactions/transactions.module';
 
 
 @Module({
-  imports: [ UsersModule, AuthModule],
+  imports: [ UsersModule, AuthModule, CategoriesModule, StockModule, CommonModule, TransactionsModule],
   controllers: [AppController],
-  providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService],
+  providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService,ConfigService,{
+    provide: APP_INTERCEPTOR,
+    useClass: LoggingInterceptor,
+  }],
 })
 export class AppModule implements NestModule {configure(consumer: MiddlewareConsumer) {
   consumer

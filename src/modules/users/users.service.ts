@@ -5,7 +5,7 @@ import { PrismaService } from '@services/prisma.service';
 import { Users } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
-import { hashPassword } from '@utils/encryption.util';
+import { hashPassword } from '../../common/utils/encryption.util';
 import { UpdateUserDto } from '@modules/users/dto/update-user.dto';
 import { UserList } from '@modules/users/interfaces/user-list.interface';
 import { UserListDto } from '@modules/users/dto/user-list.dto';
@@ -39,6 +39,7 @@ export class UsersService {
       pin_code:payload.pin_code || null,
       tokens:[],
       refresh_tokens:[],
+      login_attempts:0
     };
     return this.prismaService.users.create({ data });
   }

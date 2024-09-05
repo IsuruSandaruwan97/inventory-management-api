@@ -28,4 +28,114 @@ model Users {
   tokens         Json?   @map("tokens")
   refresh_tokens Json?   @map("refresh_tokens")
   login_attempts Int?    @default(0) @map("login_attempts")
+
+  categoriesCreated  Category[]     @relation("UsersCategoryCreatedBy")
+  categoriesUpdated  Category[]     @relation("UsersCategoryUpdatedBy")
+  subCategoryCreated SubCategory[]  @relation("UsersSubCategoryCreatedBy")
+  subCategoryUpdated SubCategory[]  @relation("UsersSubCategoryUpdatedBy")
+  stockItemUpdated   StockItems[]   @relation("UsersStockItemUpdatedBy")
+  ActivityLog        ActivityLog[]  @relation("ActivityLogUserRelation")
+  ItemRequests       ItemRequests[] @relation("ItemRequestUserRelation")
+  ItemActionTakenBy  ItemRequests[] @relation("ActionTakenByRelation")
+
+  @@map("users")
+}
+
+model Category {
+  id        Int       @id @unique @default(autoincrement())
+  name      String    @map("name")
+  code      String    @unique @map("code")
+  status    Boolean   @map("status")
+  type      Json      @map("type")
+  createdBy String    @db.Uuid
+  updatedBy String?   @db.Uuid
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  creator      Users         @relation("UsersCategoryCreatedBy", fields: [createdBy], references: [id])
+  updater      Users?        @relation("UsersCategoryUpdatedBy", fields: [updatedBy], references: [id])
+  mainCategory SubCategory[] @relation("CategoryRelation")
+  StockItems   StockItems[]  @relation("ItemCategoryRelation")
+
+  @@map("category")
+}
+
+model SubCategory {
+  id        Int       @id @unique @default(autoincrement())
+  name      String    @map("name")
+  code      String    @unique @map("code")
+  status    Boolean   @map("status")
+  category  Int       @map("category")
+  createdBy String    @db.Uuid
+  updatedBy String?   @db.Uuid
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  creator      Users        @relation("UsersSubCategoryCreatedBy", fields: [createdBy], references: [id])
+  updater      Users?       @relation("UsersSubCategoryUpdatedBy", fields: [updatedBy], references: [id])
+  mainCategory Category     @relation("CategoryRelation", fields: [category], references: [id])
+  StockItems   StockItems[] @relation("ItemSubCategoryRelation")
+
+  @@map("subcategory")
+}
+
+model StockItems {
+  id            Int       @id @unique @default(autoincrement())
+  name          String
+  code          String    @unique
+  image         String?
+  category      Int       @map("category")
+  sub_category  Int?      @map("sub_category")
+  description   String
+  reorder_level Int
+  unit_price    Decimal   @db.Decimal(10, 2)
+  last_order    DateTime
+  quantity      Int
+  updatedBy     String?   @db.Uuid
+  updatedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  status        Boolean   @default(true)
+
+  updater         Users?         @relation("UsersStockItemUpdatedBy", fields: [updatedBy], references: [id])
+  itemCategory    Category       @relation("ItemCategoryRelation", fields: [category], references: [id])
+  itemSubCategory SubCategory?   @relation("ItemSubCategoryRelation", fields: [sub_category], references: [id])
+  ItemRequests    ItemRequests[] @relation("StockItemIdRelation")
+
+  @@map("stock_items")
+}
+
+model ActivityLog {
+  id          Int      @id @unique @default(autoincrement())
+  method      String
+  path        String
+  description Json?
+  userId      String?  @db.Uuid
+  createdAt   DateTime @default(now())
+  user        Users?   @relation("ActivityLogUserRelation", fields: [userId], references: [id])
+
+  @@map("activity_log")
+}
+
+model ItemRequests {
+  id            Int       @id @unique @default(autoincrement())
+  request_id    String
+  item_id       Int       @map("item_id")
+  quantity      Int
+  note          String?
+  remark        String?
+  reject_reason String?
+  status        Int // 1 for pending,2 for accept, 0 for rejected
+  type          String
+  userId        String?   @map("userId") @db.Uuid
+  user_role     Int       @default(1)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?
+  action_taken  String?   @db.Uuid
+  action_date   DateTime?
+
+  user        Users?     @relation("ItemRequestUserRelation", fields: [userId], references: [id])
+  stockItem   StockItems @relation("StockItemIdRelation", fields: [item_id], references: [id])
+  actionTaken Users?     @relation("ActionTakenByRelation", fields: [action_taken], references: [id])
+
+  @@map("item_requests")
 }

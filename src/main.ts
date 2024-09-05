@@ -1,22 +1,32 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '@filters/http-exception.filter';
+import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
+import * as process from 'node:process';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe( ));
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.enableCors()
+  app.enableCors();
+  app.use(helmet())
   const options = new DocumentBuilder()
-    .addBearerAuth( ).addSecurityRequirements('bearer')
-    .setTitle('Nest-js Swagger Example API')
-    .setDescription('Swagger Example API API description')
+    .addBearerAuth().addSecurityRequirements('bearer')
+    .setTitle('Nest-js Swagger Inventory Management API')
+    .setDescription('Swagger API description')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
-  await app.listen(3000);
+  SwaggerModule.setup('swagger', app, document, {
+    swaggerOptions: {
+      apisSorter: 'alpha',
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  }); 
+  await app.listen(parseInt(process.env?.PORT)||3000);
 }
+
 bootstrap();
