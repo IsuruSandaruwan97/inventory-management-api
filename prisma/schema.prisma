@@ -36,6 +36,7 @@ model Users {
   stockItemUpdated   StockItems[]   @relation("UsersStockItemUpdatedBy")
   ActivityLog        ActivityLog[]  @relation("ActivityLogUserRelation")
   ItemRequests       ItemRequests[] @relation("ItemRequestUserRelation")
+  ItemActionTakenBy  ItemRequests[] @relation("ActionTakenByRelation")
 
   @@map("users")
 }
@@ -129,9 +130,12 @@ model ItemRequests {
   user_role     Int       @default(1)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime?
+  action_taken  String?   @db.Uuid
+  action_date   DateTime?
 
-  user      Users?     @relation("ItemRequestUserRelation", fields: [userId], references: [id])
-  stockItem StockItems @relation("StockItemIdRelation", fields: [item_id], references: [id])
+  user        Users?     @relation("ItemRequestUserRelation", fields: [userId], references: [id])
+  stockItem   StockItems @relation("StockItemIdRelation", fields: [item_id], references: [id])
+  actionTaken Users?     @relation("ActionTakenByRelation", fields: [action_taken], references: [id])
 
   @@map("item_requests")
 }

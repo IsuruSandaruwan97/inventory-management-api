@@ -15,7 +15,8 @@ export const ERROR_MESSAGES = {
   },
   TRANSACTIONS:{
     EMPTY_PAYLOAD:'Please select at least one item!',
-    STOCK_NOT_AVAILABLE:'Stock item not available for your request!',
+    STOCK_NOT_AVAILABLE:'Items not available in stock for your request!',
+    REQUEST_NOT_FOUND:'Request not found!'
   }
 }
 

@@ -33,14 +33,18 @@ export class StockService {
     return this.prismaService.stockItems.create({ data });
   }
 
-  async updateItem(data:UpdateStockItemDto, user:string):Promise<StockItems> {
+  async updateItem(data:UpdateStockItemDto, user?:string):Promise<StockItems> {
     return this.prismaService.stockItems.update({
       where: { id: data.id },
-      data: { ...data, updatedBy: user, updatedAt: new Date() }
+      data: { ...data, ...(user && {updatedBy: user, updatedAt: new Date()}) }
     });
   }
 
+  async updateQuantity(id:number, quantity:number):Promise<void> {
+    await this.prismaService.stockItems.update({where: { id },data:{quantity}})
+  }
+
   async checkItemAvailableById(id:number):Promise<boolean> {
-   return await this.prismaService.stockItems.count({ where: { id } })>0; 
+   return await this.prismaService.stockItems.count({ where: { id } })>0;
   }
 }

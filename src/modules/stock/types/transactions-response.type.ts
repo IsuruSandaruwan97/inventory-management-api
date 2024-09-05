@@ -1,4 +1,5 @@
 export type RequestItemsErrorType = {
-  id: number;
+  id?: number;
   message: string;
+  requestId?:string
 }[]
