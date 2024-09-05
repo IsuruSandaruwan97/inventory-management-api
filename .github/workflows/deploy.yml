@@ -28,18 +28,6 @@ jobs:
           REFRESH_TOKEN_VALIDITY: ${{ vars.REFRESH_TOKEN_VALIDITY }}
           LOGGING_ENABLE: ${{ vars.LOGGING_ENABLE }}
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Generate Prisma client
-        run: npx prisma generate
-
-      - name: Run Prisma migrations
-        run: npx prisma migrate deploy
-
-      - name: Build application
-        run: yarn build
-
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v0.1.5
         with:
