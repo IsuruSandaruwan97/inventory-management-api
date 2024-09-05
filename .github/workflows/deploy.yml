@@ -19,7 +19,7 @@ jobs:
           node-version: '20.15.1'
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Generate Prisma client
         run: npx prisma generate
@@ -28,7 +28,7 @@ jobs:
         run: npx prisma migrate deploy
 
       - name: Build application
-        run: npm run build
+        run: yarn build
 
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v0.1.5
@@ -40,8 +40,8 @@ jobs:
           script: |
             cd /root/inventory
             git pull origin main
-            npm ci
+            yarn install --frozen-lockfile
             npx prisma migrate deploy
-            npm run build
+            yarn build
             pm2 restart all  # Or the command to restart your application
 
