@@ -8,7 +8,7 @@ import * as process from 'node:process';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe( ));
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
   app.use(helmet())

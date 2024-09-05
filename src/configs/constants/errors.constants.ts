@@ -12,6 +12,10 @@ export const ERROR_MESSAGES = {
   CATEGORIES:{
     CATEGORY_NOT_FOUND: 'Category Not Found!',
     ALREADY_EXISTS: 'Category already exists!',
+  },
+  TRANSACTIONS:{
+    EMPTY_PAYLOAD:'Please select at least one item!',
+    STOCK_NOT_AVAILABLE:'Stock item not available for your request!',
   }
 }
 

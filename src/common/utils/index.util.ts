@@ -1,4 +1,9 @@
 import { TGetFilter, TGetFilterProps } from '@configs/types';
+import dayjs from 'dayjs';
+
+export const getDate= (format?:string):string=>{
+  return  dayjs().format(format)
+}
 
 export const getFilters = ({
                              filters, searchKeys,
