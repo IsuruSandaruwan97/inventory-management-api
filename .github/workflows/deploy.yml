@@ -13,16 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-        env:
-          PORT: ${{ vars.PORT }}
-          ENV: ${{ vars.ENV }}
-          TZ: ${{ vars.TZ }}
-          DATABASE_URL: ${{ vars.DATABASE_URL }}
-          JWT_SECRET: ${{ vars.JWT_SECRET }}
-          JWT_TOKEN_VALIDITY: ${{ vars.JWT_TOKEN_VALIDITY }}
-          REFRESH_TOKEN_VALIDITY: ${{ vars.REFRESH_TOKEN_VALIDITY }}
-          LOGGING_ENABLE: ${{ vars.LOGGING_ENABLE }}
-
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -33,6 +23,19 @@ jobs:
           script: |
             cd /root/inventory-management-api
             git pull origin master
+             # Install yarn if not available
+            if ! command -v yarn &> /dev/null
+            then
+              echo "Yarn not found. Installing yarn..."
+              npm install -g yarn
+            fi
+
+            # Install pm2 if not available
+            if ! command -v pm2 &> /dev/null
+            then
+              echo "PM2 not found. Installing pm2..."
+              npm install -g pm2
+            fi
             yarn install --frozen-lockfile
             npx prisma migrate deploy
             yarn build
