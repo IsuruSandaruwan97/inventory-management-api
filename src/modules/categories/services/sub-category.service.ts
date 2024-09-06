@@ -9,7 +9,7 @@ export class SubCategoryService {
   constructor(private readonly prismaService: PrismaService) {
   }
   async fetchSubCategories(category:number):Promise<SubCategory[]> {
-    return this.prismaService.subCategory.findMany({where:{category}});
+    return this.prismaService.subCategory.findMany({where:{category:parseInt(String(category))}});
   }
 
   async create(payload:CreateSubCategoryDto,user:string){
