@@ -14,21 +14,22 @@ datasource db {
 }
 
 model Users {
-  id             String  @id @default(uuid()) @db.Uuid
-  emp_id         String  @unique @map("emp_id")
-  name           String  @map("name")
-  mobile         String  @unique @map("mobile")
-  email          String? @unique @map("email")
-  address        String? @default("") @map("address")
-  role           String  @map("role")
-  status         Boolean @map("status")
-  password       String? @map("password")
-  tmp_password   String? @map("tmp_password")
-  pin_code       String? @map("pin_code")
-  tokens         Json?   @map("tokens")
-  refresh_tokens Json?   @map("refresh_tokens")
-  login_attempts Int?    @default(0) @map("login_attempts")
+  id             String   @id @default(uuid()) @db.Uuid
+  emp_id         String   @unique @map("emp_id")
+  name           String   @map("name")
+  mobile         String   @unique @map("mobile")
+  email          String?  @unique @map("email")
+  address        String?  @default("") @map("address")
+  role           String[] @map("role")
+  status         Boolean  @map("status")
+  password       String?  @map("password")
+  tmp_password   String?  @map("tmp_password")
+  pin_code       String?  @map("pin_code")
+  tokens         Json?    @map("tokens")
+  refresh_tokens Json?    @map("refresh_tokens")
+  login_attempts Int?     @default(0) @map("login_attempts")
 
+  // Relations
   categoriesCreated  Category[]     @relation("UsersCategoryCreatedBy")
   categoriesUpdated  Category[]     @relation("UsersCategoryUpdatedBy")
   subCategoryCreated SubCategory[]  @relation("UsersSubCategoryCreatedBy")
@@ -39,6 +40,15 @@ model Users {
   ItemActionTakenBy  ItemRequests[] @relation("ActionTakenByRelation")
 
   @@map("users")
+}
+
+model Role {
+  id     Int     @id @unique @default(autoincrement())
+  name   String  @map("name")
+  code   String  @unique @map("code")
+  status Boolean @default(true)
+
+  @@map("roles")
 }
 
 model Category {

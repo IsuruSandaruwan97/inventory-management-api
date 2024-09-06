@@ -23,7 +23,7 @@ export const getFilters = ({
   };
 
   return {
-    take: limit,
+    take: parseInt(String(limit)),
     skip,
     where,
     orderBy: { [sort]: sortType },
