@@ -6,7 +6,7 @@ export class VerifyUserDto {
   name:string;
   mobile :string;
   email :string;
-  role :string;
+  role :string[];
   status:boolean
   constructor(user:Partial<Users>) {
     this.id = user.id;

@@ -7,7 +7,7 @@ export class UserListDto {
   mobile :string;
   email :string;
   address?:string;
-  role :string;
+  role :string[];
   status:boolean
   constructor(user:Partial<Users>) {
     this.id = user.id;

@@ -29,7 +29,7 @@ export class UpdateUserDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  role:string;
+  role:string[];
 
   @ApiProperty()
   @IsOptional()
