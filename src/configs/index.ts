@@ -3,4 +3,4 @@ export const APP_ENVS = {
   PRODUCTION: 'production',
 };
 
-export const JWT_EXCLUDED_ROUTES: string[] = ['/'];
+export const JWT_EXCLUDED_ROUTES: string[] = ['/','/auth/login','/favicon.ico'];

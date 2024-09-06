@@ -27,7 +27,6 @@ import { TransactionsModule } from '@modules/transactions/transactions.module';
 })
 export class AppModule implements NestModule {configure(consumer: MiddlewareConsumer) {
   consumer
-    .apply(JwtMiddleware)
-    .exclude('auth/(.*)')
+    .apply(JwtMiddleware) 
     .forRoutes('*');
 }}

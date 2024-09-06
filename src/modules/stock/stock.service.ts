@@ -12,9 +12,16 @@ export class StockService {
   constructor(private readonly prismaService: PrismaService) {
   }
 
-  async fetchItems(payload:CommonFilterDto):Promise<StockItems[]> {
-    const filters = getFilters({ filters:payload,searchKeys:['name','code'] }); 
-    return this.prismaService.stockItems.findMany(filters);
+  async fetchItems(payload:CommonFilterDto):Promise<{ records:StockItems[],count:number }> {
+    const filters = getFilters({ filters:payload,searchKeys:['name','code'] });
+    const records = await this.prismaService.stockItems.findMany({ ...filters ,
+      include:{itemCategory:
+          {select:{name:true,code:true}},itemSubCategory:{select:{name:true,code:true}}
+      },
+    })
+  
+    const count = await this.prismaService.stockItems.count({ where:filters.where })
+    return {records,count};
   }
 
   async getStockData(id:number,selectedFields?:string[]):Promise<any> {

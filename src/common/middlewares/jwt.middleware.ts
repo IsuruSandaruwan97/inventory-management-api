@@ -10,11 +10,11 @@ export class JwtMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService,private readonly authService: AuthService) {
   }
   async use(req: any,res:any, next: () => void) {
-   if(JWT_EXCLUDED_ROUTES?.includes(req.baseUrl?.toLowerCase())) return next();
+   if(!req.baseUrl || JWT_EXCLUDED_ROUTES?.includes(req.baseUrl?.toLowerCase())) return next();
     const token = this.extractTokenFromHeader(req);
     if (!token) throw new UnauthorizedException(ERROR_MESSAGES.UNAUTHORIZED);
     const data = await this.verifyToken(token);
-    req['user'] = await this.authService.verifyUserLogin(data?.id);
+    req['user'] = await this.authService.verifyUserLogin(data?.id,token);
     next();
   }
 
