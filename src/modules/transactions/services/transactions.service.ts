@@ -48,7 +48,7 @@ export class TransactionsService {
         errors.push({id:request.id, requestId: request.request_id,message:`${ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE} - ${name}`});
         return;
       }
-     if(payload.action===2) await this.stockService.updateQuantity(request.item_id,quantity-request.quantity)
+     // if(payload.action===2) await this.stockService.updateQuantity(request.item_id,quantity-request.quantity)
       return await this.requestService.updateItem({
         ...request, ...(payload.action === 0 ? { reject_reason: payload.rejectReason } : { remark: payload.remark }),
         action_taken: user,

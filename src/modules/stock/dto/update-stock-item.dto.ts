@@ -68,9 +68,6 @@ export class UpdateStockItemDto  {
   @Type(() => Date)
   last_order: Date;
 
-  @ApiProperty()
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  quantity: number;
+  quantity?: number;
+ 
 }

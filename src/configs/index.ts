@@ -4,3 +4,11 @@ export const APP_ENVS = {
 };
 
 export const JWT_EXCLUDED_ROUTES: string[] = ['/','/auth/login','/favicon.ico'];
+
+export const STORE_STEPS = {
+  STORE:'store',
+  STOCK: 'stock',
+  PRODUCTION: 'production',
+  DELIVERY:'delivery'
+}
+

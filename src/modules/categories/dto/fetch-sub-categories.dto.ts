@@ -5,5 +5,5 @@ export class FetchSubCategoriesDTO {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  code:number
+  id:number
 }

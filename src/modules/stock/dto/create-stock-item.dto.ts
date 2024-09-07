@@ -64,8 +64,4 @@ export class CreateItemDto {
   @Type(() => Date)
   last_order: Date;
 
-  @ApiProperty()
-  @IsInt()
-  @Min(0)
-  quantity: number;
 }

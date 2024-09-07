@@ -6,4 +6,8 @@ export class AppService {
   getHello(): string {
     return 'Inventory  management system has been started!';
   }
+  
+  getFavIcon(){
+    return true
+  }
 }

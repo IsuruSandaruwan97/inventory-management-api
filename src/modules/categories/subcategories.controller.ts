@@ -13,9 +13,15 @@ export class SubcategoriesController {
 constructor(private readonly responseHandlerService: ResponseHandlerService,
             private readonly subCategoryService: SubCategoryService) {
 }
-  @Get(':code')
-  async fetchSubCategories(@Param() params:FetchSubCategoriesDTO):Promise<ApiResponseType> {
-    return this.responseHandlerService.successResponse(await this.subCategoryService.fetchSubCategories(params.code))
+
+  @Get()
+  async fetchSubCategories():Promise<ApiResponseType> {
+    return this.responseHandlerService.successResponse(await this.subCategoryService.fetchSubCategories())
+  }
+
+  @Get(':id')
+  async fetchSubCategoriesByID(@Param() params:FetchSubCategoriesDTO):Promise<ApiResponseType> {
+    return this.responseHandlerService.successResponse(await this.subCategoryService.fetchSubCategories(params.id))
   }
 
   @Post()

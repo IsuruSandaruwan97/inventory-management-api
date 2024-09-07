@@ -14,3 +14,5 @@ export type TGetFilter = {
   skip: number;
   where: any
 }
+
+export type TStockSteps = 'store'| 'production'| 'delivery'| 'damage'| 'return'| 'stock'
