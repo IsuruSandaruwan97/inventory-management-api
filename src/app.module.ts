@@ -15,10 +15,11 @@ import { LoggingInterceptor } from '@common/interceptors/logging.Interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { TransactionsModule } from '@modules/transactions/transactions.module';
+import { ItemsModule } from './modules/items/items.module';
 
 
 @Module({
-  imports: [ UsersModule, AuthModule, CategoriesModule, StockModule, CommonModule, TransactionsModule],
+  imports: [ UsersModule, AuthModule, CategoriesModule, StockModule, CommonModule, TransactionsModule, ItemsModule],
   controllers: [AppController],
   providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService,ConfigService,{
     provide: APP_INTERCEPTOR,

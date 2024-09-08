@@ -7,22 +7,22 @@ export class UpdateCategoriesDto {
   @IsInt()
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   name?: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   code?: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsBoolean()
   status?: boolean;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsArray()
   type?:string[];

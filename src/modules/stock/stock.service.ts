@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '@services/prisma.service';
-import { CreateItemDto } from '@modules/stock/dto/create-stock-item.dto';
+import { CreateItemDto } from '@modules/items/dto/create-stock-item.dto';
 import { StockItems } from '@prisma/client';
-import { UpdateStockItemDto } from '@modules/stock/dto/update-stock-item.dto';
+import { UpdateStockItemDto } from '@modules/items/dto/update-stock-item.dto';
 import { CommonFilterDto } from '@common/dto/index.dto';
 import { getFilters } from '@common/utils/index.util';
 import isEmpty from 'lodash/isEmpty';
@@ -63,7 +63,7 @@ export class StockService {
   }
 
   async updateItem(data: UpdateStockItemDto, user?: string): Promise<StockItems> {
-    delete data.quantity;
+   
     return this.prismaService.stockItems.update({
       where: { id: data.id },
       data: { ...data, ...(user && { updatedBy: user, updatedAt: new Date() }) },

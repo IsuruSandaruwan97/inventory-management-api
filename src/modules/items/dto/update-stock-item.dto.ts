@@ -1,16 +1,4 @@
-import {
-  IsDate,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUrl,
-  Length,
-  Min,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, IsUrl, Length, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateStockItemDto  {
@@ -20,54 +8,39 @@ export class UpdateStockItemDto  {
   @IsInt()
   id:number
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   @Length(1, 255)
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   @IsUrl()
   image?: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsInt()
   @IsPositive()
   category: number;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsInt()
   @IsPositive()
   sub_category?: number;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   @Length(1, 500)
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsInt()
   @Min(0)
   reorder_level: number;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
-  unit_price: number;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  last_order: Date;
-
-  quantity?: number;
- 
 }

@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, Post, Put, Query, Req } from '@nestjs/com
 import { ApiTags } from '@nestjs/swagger';
 import { StockService } from '@modules/stock/stock.service';
 import { ResponseHandlerService } from '@services/response-handler.service';
-import { CreateItemDto } from '@modules/stock/dto/create-stock-item.dto';
-import { UpdateStockItemDto } from '@modules/stock/dto/update-stock-item.dto';
+import { CreateItemDto } from '@modules/items/dto/create-stock-item.dto';
+import { UpdateStockItemDto } from '@modules/items/dto/update-stock-item.dto';
 import { ApiRequest, ApiResponseType } from '@configs/types/api-response.type';
 import { CommonFilterDto } from '@common/dto/index.dto';
 import { TStockSteps } from '@configs/types';

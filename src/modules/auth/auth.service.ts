@@ -27,6 +27,7 @@ export class AuthService {
     }
     const token = await this.generateJwt({
       id: user.id,
+      name:user.name,
       mobile: user.mobile,
       email: user?.email || null,
       role: user.role,

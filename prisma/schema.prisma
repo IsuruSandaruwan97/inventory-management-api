@@ -104,8 +104,6 @@ model StockItems {
   sub_category    Int?           @map("sub_category")
   description     String
   reorder_level   Int
-  unit_price      Decimal        @db.Decimal(10, 2)
-  last_order      DateTime
   updatedBy       String?        @db.Uuid
   updatedAt       DateTime?
   createdAt       DateTime       @default(now())
