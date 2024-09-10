@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '@services/prisma.service';
-import { CreateItemDto } from '@modules/items/dto/create-stock-item.dto';
-import { StockItems } from '@prisma/client';
+import { Stock, StockItems } from '@prisma/client';
 import { UpdateStockItemDto } from '@modules/items/dto/update-stock-item.dto';
 import { CommonFilterDto } from '@common/dto/index.dto';
 import { getFilters } from '@common/utils/index.util';
 import isEmpty from 'lodash/isEmpty';
+import { CreateStockDto } from '@modules/stock/dto/create-stock.dto';
 
 @Injectable()
 export class StockService {
@@ -27,21 +27,19 @@ export class StockService {
       }
       filters.where.sub_category = { in: subCategoriesIds };
     }
-    const records = await this.prismaService.stockItems.findMany({
+
+    let records = await this.prismaService.stockItems.findMany({
       ...filters,
       include: {
         itemCategory: { select: { name: true, code: true } },
         itemSubCategory: { select: { name: true, code: true } },
+        ItemQuantity: {where:{type}, select: { quantity: true,type:true, unit_price:true,id:true } },
       },
     });
-    await Promise.all(records?.map(async (record: any) => { 
-      const itemQuantity = await this.prismaService.itemQuantity.findFirst({
-        // @ts-ignore
-        where: { item_id: record.id, ...(type && { type }) },
-        select: { quantity: true },
-      });
-      record.quantity = itemQuantity?.quantity ?? 0;
-    }));
+    records?.map(record=>{
+      record['quantity'] = (record['ItemQuantity']||[]).reduce((sum: number, record: { quantity: number; }) => sum + record.quantity, 0);
+      record['total'] = (record['ItemQuantity']||[]).reduce((sum: number, record: { unit_price: number;quantity:number }) => sum + (record.unit_price*record.quantity), 0);
+    })
     const count = await this.prismaService.stockItems.count({ where: filters.where });
     return { records, count };
   }
@@ -55,11 +53,10 @@ export class StockService {
     } catch (e) {
       console.error(e);
     }
-
   }
 
-  async createItem(data: CreateItemDto): Promise<StockItems> {
-    return this.prismaService.stockItems.create({ data });
+  async createItem(data: CreateStockDto): Promise<Stock> {
+    return this.prismaService.stock.create({data});
   }
 
   async updateItem(data: UpdateStockItemDto, user?: string): Promise<StockItems> {
@@ -69,12 +66,5 @@ export class StockService {
       data: { ...data, ...(user && { updatedBy: user, updatedAt: new Date() }) },
     });
   }
-
-  // async updateQuantity(id:number, quantity:number):Promise<void> {
-  //   await this.prismaService.stockItems.update({where: { id },data:{quantity}})
-  // }
-
-  async checkItemAvailableById(id: number): Promise<boolean> {
-    return await this.prismaService.stockItems.count({ where: { id } }) > 0;
-  }
+  
 }

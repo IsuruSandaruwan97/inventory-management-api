@@ -17,13 +17,8 @@ export class TransactionsService {
     if (isEmpty(payload)) throw new HttpException(ERROR_MESSAGES.TRANSACTIONS.EMPTY_PAYLOAD, HttpStatus.BAD_REQUEST);
     const errors: RequestItemsErrorType = [];
     await Promise.all(payload.map(async (item) => {
-      const itemAvailable = await this.stockService.checkItemAvailableById(item.item_id);
-      if (!itemAvailable) {
-        errors.push({ id: item.item_id, message: `${item.item_id} - ${ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE}` });
-        return;
-      }
       const { status, name } = await this.stockService.getStockData(item.item_id, ['quantity', 'name', 'status']);
-      if (!status  ) {
+      if (!status) {
         errors.push({ id: item.item_id, message: `${name} - ${ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE}` });
         return;
       }

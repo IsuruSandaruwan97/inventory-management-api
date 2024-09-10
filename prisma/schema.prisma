@@ -112,7 +112,7 @@ model StockItems {
   itemCategory    Category       @relation("ItemCategoryRelation", fields: [category], references: [id])
   itemSubCategory SubCategory?   @relation("ItemSubCategoryRelation", fields: [sub_category], references: [id])
   ItemRequests    ItemRequests[] @relation("StockItemIdRelation")
-  ItemQuantity    ItemQuantity[] @relation("ItemRelation")
+  ItemQuantity    Stock[]        @relation("ItemRelation")
 
   @@map("stock_items")
 }
@@ -153,13 +153,16 @@ model ItemRequests {
   @@map("item_requests")
 }
 
-model ItemQuantity {
-  id       Int              @id @unique @default(autoincrement())
-  item_id  Int
-  type     ItemQuantityType // store, stock, production, delivery
-  quantity Int
+model Stock {
+  id         Int              @id @unique @default(autoincrement())
+  item_id    Int
+  type       ItemQuantityType // store, stock, production, delivery
+  quantity   Int
+  unit_price Float            @default(0)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime?
 
   item StockItems @relation("ItemRelation", fields: [item_id], references: [id])
 
-  @@map("item_quantity")
+  @@map("stock")
 }
