@@ -1,16 +1,4 @@
-import {
-  IsDate,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUrl,
-  Length,
-  Min,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, IsUrl, Length, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateItemDto {
@@ -27,7 +15,7 @@ export class CreateItemDto {
   @Length(1, 100)
   code: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   @IsUrl()
@@ -54,18 +42,6 @@ export class CreateItemDto {
   @Min(0)
   reorder_level: number;
 
-  @ApiProperty()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
-  unit_price: number;
 
-  @ApiProperty()
-  @IsDate()
-  @Type(() => Date)
-  last_order: Date;
 
-  @ApiProperty()
-  @IsInt()
-  @Min(0)
-  quantity: number;
 }

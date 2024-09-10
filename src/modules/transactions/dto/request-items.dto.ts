@@ -12,12 +12,12 @@ export class RequestItemsDto {
   @IsInt()
   quantity: number;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   note?:string
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsInt()
   status:number; // 1 for pending,2 for accept, 0 for rejected

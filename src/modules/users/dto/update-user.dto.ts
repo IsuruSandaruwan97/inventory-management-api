@@ -8,11 +8,11 @@ export class UpdateUserDto {
   @IsUUID()
   id:string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   emp_id: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   name:string;
@@ -21,21 +21,21 @@ export class UpdateUserDto {
   @IsString()
   mobile:string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   role:string[];
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   status:boolean;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   pin_code?:string;
 

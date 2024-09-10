@@ -13,6 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ItemQuantityType {
+  store
+  stock
+  production
+  delivery
+}
+
 model Users {
   id             String   @id @default(uuid()) @db.Uuid
   emp_id         String   @unique @map("emp_id")
@@ -56,7 +63,6 @@ model Category {
   name      String    @map("name")
   code      String    @unique @map("code")
   status    Boolean   @map("status")
-  type      Json      @map("type")
   createdBy String    @db.Uuid
   updatedBy String?   @db.Uuid
   createdAt DateTime  @default(now())
@@ -71,16 +77,16 @@ model Category {
 }
 
 model SubCategory {
-  id        Int       @id @unique @default(autoincrement())
-  name      String    @map("name")
-  code      String    @unique @map("code")
-  status    Boolean   @map("status")
-  category  Int       @map("category")
-  createdBy String    @db.Uuid
-  updatedBy String?   @db.Uuid
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-
+  id           Int          @id @unique @default(autoincrement())
+  name         String       @map("name")
+  code         String       @unique @map("code")
+  status       Boolean      @map("status")
+  category     Int          @map("category")
+  type         String[]
+  createdBy    String       @db.Uuid
+  updatedBy    String?      @db.Uuid
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime?    @updatedAt
   creator      Users        @relation("UsersSubCategoryCreatedBy", fields: [createdBy], references: [id])
   updater      Users?       @relation("UsersSubCategoryUpdatedBy", fields: [updatedBy], references: [id])
   mainCategory Category     @relation("CategoryRelation", fields: [category], references: [id])
@@ -90,26 +96,23 @@ model SubCategory {
 }
 
 model StockItems {
-  id            Int       @id @unique @default(autoincrement())
-  name          String
-  code          String    @unique
-  image         String?
-  category      Int       @map("category")
-  sub_category  Int?      @map("sub_category")
-  description   String
-  reorder_level Int
-  unit_price    Decimal   @db.Decimal(10, 2)
-  last_order    DateTime
-  quantity      Int
-  updatedBy     String?   @db.Uuid
-  updatedAt     DateTime?
-  createdAt     DateTime  @default(now())
-  status        Boolean   @default(true)
-
+  id              Int            @id @unique @default(autoincrement())
+  name            String
+  code            String         @unique
+  image           String?
+  category        Int            @map("category")
+  sub_category    Int?           @map("sub_category")
+  description     String
+  reorder_level   Int
+  updatedBy       String?        @db.Uuid
+  updatedAt       DateTime?
+  createdAt       DateTime       @default(now())
+  status          Boolean        @default(true)
   updater         Users?         @relation("UsersStockItemUpdatedBy", fields: [updatedBy], references: [id])
   itemCategory    Category       @relation("ItemCategoryRelation", fields: [category], references: [id])
   itemSubCategory SubCategory?   @relation("ItemSubCategoryRelation", fields: [sub_category], references: [id])
   ItemRequests    ItemRequests[] @relation("StockItemIdRelation")
+  ItemQuantity    Stock[]        @relation("ItemRelation")
 
   @@map("stock_items")
 }
@@ -148,4 +151,18 @@ model ItemRequests {
   actionTaken Users?     @relation("ActionTakenByRelation", fields: [action_taken], references: [id])
 
   @@map("item_requests")
+}
+
+model Stock {
+  id         Int              @id @unique @default(autoincrement())
+  item_id    Int
+  type       ItemQuantityType // store, stock, production, delivery
+  quantity   Int
+  unit_price Float            @default(0)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime?
+
+  item StockItems @relation("ItemRelation", fields: [item_id], references: [id])
+
+  @@map("stock")
 }

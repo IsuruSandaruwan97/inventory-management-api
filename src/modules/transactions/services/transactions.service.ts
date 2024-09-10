@@ -17,13 +17,8 @@ export class TransactionsService {
     if (isEmpty(payload)) throw new HttpException(ERROR_MESSAGES.TRANSACTIONS.EMPTY_PAYLOAD, HttpStatus.BAD_REQUEST);
     const errors: RequestItemsErrorType = [];
     await Promise.all(payload.map(async (item) => {
-      const itemAvailable = await this.stockService.checkItemAvailableById(item.item_id);
-      if (!itemAvailable) {
-        errors.push({ id: item.item_id, message: `${item.item_id} - ${ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE}` });
-        return;
-      }
       const { status, name } = await this.stockService.getStockData(item.item_id, ['quantity', 'name', 'status']);
-      if (!status  ) {
+      if (!status) {
         errors.push({ id: item.item_id, message: `${name} - ${ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE}` });
         return;
       }
@@ -48,7 +43,7 @@ export class TransactionsService {
         errors.push({id:request.id, requestId: request.request_id,message:`${ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE} - ${name}`});
         return;
       }
-     if(payload.action===2) await this.stockService.updateQuantity(request.item_id,quantity-request.quantity)
+     // if(payload.action===2) await this.stockService.updateQuantity(request.item_id,quantity-request.quantity)
       return await this.requestService.updateItem({
         ...request, ...(payload.action === 0 ? { reject_reason: payload.rejectReason } : { remark: payload.remark }),
         action_taken: user,

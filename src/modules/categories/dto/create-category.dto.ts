@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCategoryDto {
@@ -18,8 +18,4 @@ export class CreateCategoryDto {
   @IsBoolean()
   status: boolean;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsArray()
-  type:string[];
 }

@@ -4,7 +4,7 @@ import { RequestItemsDto } from '@modules/transactions/dto/request-items.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export  class ItemsOfRequestsDto {
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   requestId?:string;

@@ -3,26 +3,26 @@ import { IsOptional, IsString, Matches } from 'class-validator';
 
 export class CommonFilterDto {
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   page?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   limit?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   search?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'from must be in YYYY-MM-DD format' })
   from?: Date;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'to must be in YYYY-MM-DD format' })

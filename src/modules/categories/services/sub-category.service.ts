@@ -3,19 +3,21 @@ import { CreateSubCategoryDto } from '@modules/categories/dto/create-sub-categor
 import { PrismaService } from '@services/prisma.service';
 import { UpdateSubCategoriesDTO } from '@modules/categories/dto/update-sub-category';
 import { SubCategory } from '@prisma/client';
+import isEmpty from 'lodash/isEmpty';
 
 @Injectable()
 export class SubCategoryService {
   constructor(private readonly prismaService: PrismaService) {
   }
-  async fetchSubCategories(category:number):Promise<SubCategory[]> {
-    return this.prismaService.subCategory.findMany({where:{category:parseInt(String(category))}});
+  async fetchSubCategories(category?:number):Promise<SubCategory[]> {
+    const where = isEmpty(category)?{}:{category:parseInt(String(category))}
+    return this.prismaService.subCategory.findMany({where,orderBy:{id:'desc'},include:{mainCategory:{select:{id:true,name:true}}}});
   }
 
   async create(payload:CreateSubCategoryDto,user:string){
     return this.prismaService.subCategory.create({
       data: {
-        ...payload,
+        ...payload,type:[...payload.type,...['return','damage']],
         createdBy: user
       }
     });
