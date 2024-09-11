@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { hashPassword } from '@common/utils/encryption.util';
 
 const prisma = new PrismaClient();
 
@@ -21,7 +20,7 @@ async function main() {
     address: "No 196, Kudagoda, Horampella",
     role: ["admin"],
     status: true,
-    password: hashPassword(process.env.DEFAULT_PASSWORD),
+    password: process.env.DEFAULT_PASSWORD,
     tmp_password: null,
     pin_code: null,
     login_attempts: 0,

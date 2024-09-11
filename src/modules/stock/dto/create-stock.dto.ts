@@ -1,7 +1,8 @@
-import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
-export class CreateStockDto {
+export class CreateStockItemDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsInt()
@@ -22,3 +23,12 @@ export class CreateStockDto {
   @IsNumber()
   unit_price: number;
 }
+
+export class CreateStockDto {
+  @ApiProperty({ type: [CreateStockItemDto] })
+  @ValidateNested({ each: true })
+  @Type(() => CreateStockItemDto)
+  @IsNotEmpty()
+  items: CreateStockItemDto[];
+}
+

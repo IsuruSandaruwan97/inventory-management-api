@@ -21,6 +21,7 @@ export class StockController {
     return this.responseHandlerService.successResponse(await this.stockService.fetchItems(query,params.type))
   }
 
+
   @Post()
   async createItem(@Body() payload:CreateStockDto):Promise<ApiResponseType>{
     return this.responseHandlerService.successResponse(await this.stockService.createItem(payload))
