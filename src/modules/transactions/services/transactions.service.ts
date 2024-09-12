@@ -13,11 +13,12 @@ export class TransactionsService {
   constructor(private readonly requestService: RequestsService, private readonly stockService: StockService) {
   }
 
+
   async requestItems(payload: RequestItemsDto[], user: string, requestId?:string|null): Promise<{requestId:string,errors:RequestItemsErrorType}> {
     if (isEmpty(payload)) throw new HttpException(ERROR_MESSAGES.TRANSACTIONS.EMPTY_PAYLOAD, HttpStatus.BAD_REQUEST);
     const errors: RequestItemsErrorType = [];
     await Promise.all(payload.map(async (item) => {
-      const { status, name } = await this.stockService.getStockData(item.item_id, ['quantity', 'name', 'status']);
+      const { status, name } = await this.stockService.getStockData(item.item_id, [ 'name', 'status']);
       if (!status) {
         errors.push({ id: item.item_id, message: `${name} - ${ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE}` });
         return;

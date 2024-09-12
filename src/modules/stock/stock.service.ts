@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@services/prisma.service';
 import { StockItems } from '@prisma/client';
 import { UpdateStockItemDto } from '@modules/items/dto/update-stock-item.dto';
 import { CommonFilterDto } from '@common/dto/index.dto';
 import { getFilters } from '@common/utils/index.util';
-import isEmpty from 'lodash/isEmpty';
 import { CreateStockDto } from '@modules/stock/dto/create-stock.dto';
+import { TStockStatus, TStockSteps } from '@configs/types';
 
 @Injectable()
 export class StockService {
@@ -13,19 +13,16 @@ export class StockService {
   constructor(private readonly prismaService: PrismaService) {
   }
 
-  async fetchItems(payload: CommonFilterDto, type?: string): Promise<{ records: StockItems[], count: number }> {
-    const filters: any = getFilters({ filters: payload, searchKeys: ['name', 'code'] });
-    if (!isEmpty(type) && type) {
-      // @ts-ignore
-      let subCategories = await this.prismaService.subCategory.findMany({
-        where: { type: { has: type } },
-        select: { id: true },
-      });
-      const subCategoriesIds = subCategories.map(item => item.id);
-      if (isEmpty(subCategoriesIds)) {
-        throw new HttpException('Items not found', HttpStatus.NOT_FOUND);
-      }
-      filters.where.sub_category = { in: subCategoriesIds };
+  async fetchItems(payload: CommonFilterDto, type?: TStockSteps, status: TStockStatus = 'pending'): Promise<{
+    records: StockItems[],
+    count: number
+  }> {
+    let filters: any = getFilters({ filters: payload, searchKeys: ['name', 'code'] });
+    filters.where.ItemQuantity= {
+      some: {
+        type,
+          production_state:status
+      },
     }
 
     let records = await this.prismaService.stockItems.findMany({
@@ -33,7 +30,11 @@ export class StockService {
       include: {
         itemCategory: { select: { name: true, code: true } },
         itemSubCategory: { select: { name: true, code: true } },
-        ItemQuantity: { where: { type }, select: { quantity: true, type: true, unit_price: true, id: true } },
+        ItemQuantity: {
+          where: {  quantity: { gt: 0 } },
+          select: { quantity: true, type: true, unit_price: true, id: true, createdAt: true, updatedAt: true },
+          orderBy: { id: 'desc' },
+        },
       },
     });
     records?.map(record => {

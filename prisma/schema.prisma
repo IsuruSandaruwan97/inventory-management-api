@@ -20,6 +20,13 @@ enum ItemQuantityType {
   delivery
 }
 
+enum ProductionState {
+  pending
+  completed
+  damaged
+  return
+}
+
 model Users {
   id             String   @id @default(uuid()) @db.Uuid
   emp_id         String   @unique @map("emp_id")
@@ -154,13 +161,14 @@ model ItemRequests {
 }
 
 model Stock {
-  id         Int              @id @unique @default(autoincrement())
-  item_id    Int
-  type       ItemQuantityType // store, stock, production, delivery
-  quantity   Int
-  unit_price Float            @default(0)
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime?
+  id               Int              @id @unique @default(autoincrement())
+  item_id          Int
+  type             ItemQuantityType // store, stock, production, delivery
+  quantity         Int
+  production_state ProductionState  @default(pending)
+  unit_price       Float            @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime?
 
   item StockItems @relation("ItemRelation", fields: [item_id], references: [id])
 
