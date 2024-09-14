@@ -7,7 +7,7 @@ export class RequestActionDto {
   @IsString()
   requestId: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsInt()
   id?: number;
@@ -18,17 +18,17 @@ export class RequestActionDto {
   @IsIn([0, 2], { message: 'Status must be either 0 or 2' })
   action: number
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   remark?: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   rejectReason?: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsInt()
   @IsPositive()

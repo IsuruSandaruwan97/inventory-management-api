@@ -9,6 +9,6 @@ export interface VerifyUserInterface {
   name:string;
   mobile :string;
   email :string;
-  role :string;
+  role :string[];
   status:boolean
 }

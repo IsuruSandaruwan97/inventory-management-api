@@ -13,4 +13,9 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('favicon.ico') 
+  getFavIcon(){
+    return this.appService.getFavIcon();
+  }
+
 }

@@ -19,26 +19,26 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   address?: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
-  role:string;
+  role:string[];
 
   @ApiProperty()
   @IsNotEmpty()
   status:string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
   password: string;
 
-  @ApiProperty()
+  @ApiProperty({required:false})
   @IsOptional()
   pin_code?:string;
 
