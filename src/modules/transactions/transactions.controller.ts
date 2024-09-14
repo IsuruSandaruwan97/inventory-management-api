@@ -7,6 +7,7 @@ import { ItemsOfRequestsDto } from '@modules/transactions/dto/items-of-requests.
 import { RequestActionDto } from '@modules/transactions/dto/request-action.dto';
 import { RequestsService } from '@modules/transactions/services/requests.service';
 import { CommonFilterDto } from '@common/dto/index.dto';
+import { RequestDataDto } from '@modules/transactions/dto/request-data.dto';
 
 @Controller('transactions')
 @ApiTags('Transactions')
@@ -16,7 +17,7 @@ export class TransactionsController {
               private readonly requestService:RequestsService) {}
 
   @Get()
-  async fetchItemRequests(@Query() params:CommonFilterDto): Promise<ApiResponseType> {
+  async fetchItemRequests(@Query() params:CommonFilterDto & RequestDataDto): Promise<ApiResponseType> {
     return this.responseHandlerService.successResponse(await this.requestService.fetchRequests(params))
   }
 
@@ -27,6 +28,6 @@ export class TransactionsController {
 
   @Put('action')
   async acceptOrRejectRequest(@Body() body:RequestActionDto, @Req() req:ApiRequest):Promise<ApiResponseType> {
-    return this.responseHandlerService.successResponse(await this.transactionsService.requestAction(body,req.user.id),'Successfully accepted the request');
+    return this.responseHandlerService.successResponse(await this.transactionsService.requestAction(body,req.user.id),`Successfully ${body.action===0?'reject':'approved'} the request`);
   }
 }

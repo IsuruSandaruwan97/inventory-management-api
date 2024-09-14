@@ -18,12 +18,12 @@ export class StockService {
     count: number
   }> {
     let filters: any = getFilters({ filters: payload, searchKeys: ['name', 'code'] });
-    filters.where.ItemQuantity= {
+    filters.where.ItemQuantity = {
       some: {
         type,
-          production_state:status
+        production_state: status,
       },
-    }
+    };
 
     let records = await this.prismaService.stockItems.findMany({
       ...filters,
@@ -31,7 +31,7 @@ export class StockService {
         itemCategory: { select: { name: true, code: true } },
         itemSubCategory: { select: { name: true, code: true } },
         ItemQuantity: {
-          where: {  quantity: { gt: 0 } },
+          where: { quantity: { gt: 0 },type },
           select: { quantity: true, type: true, unit_price: true, id: true, createdAt: true, updatedAt: true },
           orderBy: { id: 'desc' },
         },
@@ -59,6 +59,24 @@ export class StockService {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  async getQuantityData(id: number, type: TStockSteps, production_state: TStockStatus = 'pending'): Promise<{
+    status: boolean,
+    quantity: number,
+    name: string
+  }> {
+    const {name,status} = await this.prismaService.stockItems.findFirstOrThrow({
+      where: { id },
+      select: { name: true, status: true },
+    });
+
+    const { _sum } = await this.prismaService.stock.aggregate({
+      where: { item_id: id, type, production_state },
+      _sum: { quantity: true },
+    });
+
+    return { name, quantity: _sum.quantity, status };
   }
 
   async createItem(data: CreateStockDto): Promise<void> {
@@ -93,4 +111,49 @@ export class StockService {
     });
   }
 
+  async updateQuantity(item:number,type:TStockSteps,reduceQuantity:number,newType:TStockSteps,tmpAmount?:number):Promise<boolean|string>{
+
+    let remainingQuantity = reduceQuantity;
+    if(remainingQuantity<=0) {
+      await this.prismaService.stock.create({
+        data:{
+          item_id:item,
+          quantity:tmpAmount,
+          type:newType,
+          production_state:'pending'
+        }
+      })
+      return true;
+    }
+    const { availableQuantity,id} = await this.prismaService.stock.findFirst({
+      where:{
+        type,
+        item_id:item,
+        production_state:'pending',
+        quantity:{
+          gt:0
+        },
+        item:{
+          status:true
+        }
+      },orderBy:{
+        createdAt:'asc'
+      },select:{
+        quantity:true,
+        id:true
+      }
+    })?.then(response=> ({
+      availableQuantity:response?.quantity || 0,
+      id:response.id
+    }))
+
+    const reductionAmount = Math.min(availableQuantity, remainingQuantity);
+    await this.prismaService.stock.update({
+      where:{id},
+      data:{
+        quantity:availableQuantity-reductionAmount
+      }
+    })
+    await this.updateQuantity(item,type, remainingQuantity-reductionAmount,newType,reduceQuantity);
+  }
 }

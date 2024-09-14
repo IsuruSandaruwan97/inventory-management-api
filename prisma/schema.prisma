@@ -166,7 +166,7 @@ model Stock {
   type             ItemQuantityType // store, stock, production, delivery
   quantity         Int
   production_state ProductionState  @default(pending)
-  unit_price       Float            @default(0)
+  unit_price       Float?           @default(0)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime?
 
