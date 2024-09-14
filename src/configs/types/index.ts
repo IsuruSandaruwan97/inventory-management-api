@@ -15,4 +15,6 @@ export type TGetFilter = {
   where: any
 }
 
-export type TStockSteps = 'store'| 'production'| 'delivery'| 'damage'| 'return'| 'stock'
+export type TStockSteps = 'store'| 'production'| 'delivery'| 'stock'
+
+export type TStockStatus = 'pending'|'completed'|'return'|'damaged'

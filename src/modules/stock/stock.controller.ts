@@ -5,7 +5,7 @@ import { ResponseHandlerService } from '@services/response-handler.service';
 import { UpdateStockItemDto } from '@modules/items/dto/update-stock-item.dto';
 import { ApiRequest, ApiResponseType } from '@configs/types/api-response.type';
 import { CommonFilterDto } from '@common/dto/index.dto';
-import { TStockSteps } from '@configs/types';
+import { TStockStatus, TStockSteps } from '@configs/types';
 import { CreateStockDto } from '@modules/stock/dto/create-stock.dto';
 
 @Controller('stock')
@@ -16,10 +16,11 @@ export class StockController {
     private readonly responseHandlerService: ResponseHandlerService,
   ) { }
   
-  @Get(':type')
-  async getAllByType(@Query() query:CommonFilterDto,@Param() params:{type:TStockSteps}):Promise<ApiResponseType> {
-    return this.responseHandlerService.successResponse(await this.stockService.fetchItems(query,params.type))
+  @Get(':type/:status')
+  async getAllByType(@Query() query:CommonFilterDto,@Param() params:{type:TStockSteps,status:TStockStatus}):Promise<ApiResponseType> {
+    return this.responseHandlerService.successResponse(await this.stockService.fetchItems(query,params.type,params.status));
   }
+
 
   @Post()
   async createItem(@Body() payload:CreateStockDto):Promise<ApiResponseType>{
