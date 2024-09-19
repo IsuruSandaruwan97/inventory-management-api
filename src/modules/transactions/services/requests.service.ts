@@ -32,25 +32,33 @@ export class RequestsService {
       return responses?.map(async item => {
         const records = await this.prismaService.itemRequests.findMany({
           where: { request_id: item.request_id },
-          include: { stockItem: { select: { name: true } } },
+          include: {
+            stockItem: {
+              select: {
+                name: true, itemCategory: {
+                  select: { name: true },
+                },
+              },
+            },
+          },
         });
         const date = records[0]?.createdAt;
         let status = 'Pending';
-        if(dayjs(date).isSame(dayjs(), 'day'))status='New';
-        const actionStatus = records.every( (val, i, arr) => val.status === arr[0].status);
+        if (dayjs(date).isSame(dayjs(), 'day')) status = 'New';
+        const actionStatus = records.every((val, i, arr) => val.status === arr[0].status);
 
-        if(actionStatus){
+        if (actionStatus) {
           const action = records[0].status;
-          if( [0,1,2].includes(records[0].status) ){
-            if(action===2) status ='Accepted';
-            else if(action===0) status='Rejected';
-          }else status = 'Partially Accepted';
-        }else status = 'Partially Accepted';
+          if ([0, 1, 2].includes(records[0].status)) {
+            if (action === 2) status = 'Accepted';
+            else if (action === 0) status = 'Rejected';
+          } else status = 'Partially Accepted';
+        } else status = 'Partially Accepted';
         return {
           request_id: item.request_id,
           date,
           status,
-          note:records[0]?.note,
+          note: records[0]?.note,
           description: `${records.length > 1 ? `${records.length} ` : ''}Item${records?.length > 1 ? 's' : ''} Request - ${date?.toDateString()} ${date?.toLocaleTimeString()}`,
           records,
         };
@@ -59,7 +67,7 @@ export class RequestsService {
     const count = await this.prismaService.itemRequests.groupBy({
       by: ['request_id'],
       where,
-    })?.then(response=>response?.length||0);
+    })?.then(response => response?.length || 0);
     return { records, count };
   }
 
