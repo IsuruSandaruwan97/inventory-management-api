@@ -29,7 +29,7 @@ export class StockService {
       ...filters,
       include: {
         itemCategory: { select: { name: true, code: true } },
-        itemSubCategory: { select: { name: true, code: true } },
+
         ItemQuantity: {
           where: { quantity: { gt: 0 },type },
           select: { quantity: true, type: true, unit_price: true, id: true, createdAt: true, updatedAt: true },
