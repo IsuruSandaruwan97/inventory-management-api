@@ -69,7 +69,7 @@ export class TransactionsService {
       }
 
       if (payload.action === 2) {
-       await this.stockService.updateQuantity(request.item_id, type, request?.quantity || 0,request.type as TStockSteps);
+       await this.stockService.updateQuantity(request.item_id, type, request?.quantity || 0,'production');
       }
       return await this.requestService.updateItem({
         ...request, ...(payload.action === 0 ? { reject_reason: payload.rejectReason } : { remark: payload.remark }),
