@@ -50,6 +50,7 @@ model Users {
   ActivityLog       ActivityLog[]  @relation("ActivityLogUserRelation")
   ItemRequests      ItemRequests[] @relation("ItemRequestUserRelation")
   ItemActionTakenBy ItemRequests[] @relation("ActionTakenByRelation")
+  DamageItems       DamageItems[]  @relation("DamageItemUserRelation")
 
   @@map("users")
 }
@@ -97,6 +98,7 @@ model StockItems {
   itemCategory  Category       @relation("ItemCategoryRelation", fields: [category], references: [id])
   ItemRequests  ItemRequests[] @relation("StockItemIdRelation")
   ItemQuantity  Stock[]        @relation("ItemRelation")
+  DamageItems   DamageItems[]  @relation("DamageItemReleation")
 
   @@map("stock_items")
 }
@@ -150,4 +152,19 @@ model Stock {
   item StockItems @relation("ItemRelation", fields: [item_id], references: [id])
 
   @@map("stock")
+}
+
+model DamageItems {
+  id        Int              @id @unique @default(autoincrement())
+  item_id   Int
+  type      ItemQuantityType
+  quantity  Int
+  reason    String
+  userId    String           @db.Uuid
+  createdAt DateTime         @default(now())
+
+  item StockItems @relation("DamageItemReleation", fields: [item_id], references: [id])
+  user Users      @relation("DamageItemUserRelation", fields: [userId], references: [id])
+
+  @@map("damage_items")
 }

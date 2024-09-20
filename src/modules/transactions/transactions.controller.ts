@@ -8,6 +8,7 @@ import { RequestActionDto } from '@modules/transactions/dto/request-action.dto';
 import { RequestsService } from '@modules/transactions/services/requests.service';
 import { CommonFilterDto } from '@common/dto/index.dto';
 import { RequestDataDto } from '@modules/transactions/dto/request-data.dto';
+import { MarkDamageItemsDto } from '@modules/transactions/dto/mark-damage-items.dto';
 
 @Controller('transactions')
 @ApiTags('Transactions')
@@ -29,5 +30,15 @@ export class TransactionsController {
   @Put('action')
   async acceptOrRejectRequest(@Body() body:RequestActionDto, @Req() req:ApiRequest):Promise<ApiResponseType> {
     return this.responseHandlerService.successResponse(await this.transactionsService.requestAction(body,req.user.id),`Successfully ${body.action===0?'reject':'approved'} the request`);
+  }
+
+  @Get('req-count')
+  async getPendingReqCount():Promise<ApiResponseType> {
+    return this.responseHandlerService.successResponse(await this.requestService.getPendingReqCount())
+  }
+
+  @Put('damage')
+  async markDamageItems( @Body() body:MarkDamageItemsDto,@Req() req:ApiRequest):Promise<ApiResponseType>{
+    return this.responseHandlerService.successResponse(await this.transactionsService.damageItems(body,req.user.id))
   }
 }
