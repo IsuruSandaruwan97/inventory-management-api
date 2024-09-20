@@ -1,5 +1,16 @@
-import { IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, IsUrl, Length, Min } from 'class-validator';
+import {
+  IsArray,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Length,
+  Min ,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
 
 export class CreateItemDto {
 
@@ -22,14 +33,8 @@ export class CreateItemDto {
   image?: string;
 
   @ApiProperty()
-  @IsInt()
-  @IsPositive()
-  category: number;
-
-  @ApiProperty()
-  @IsInt()
-  @IsPositive()
-  sub_category?: number;
+  @IsArray()
+  category: number[];
 
   @ApiProperty()
   @IsString()
@@ -42,6 +47,8 @@ export class CreateItemDto {
   @Min(0)
   reorder_level: number;
 
-
-
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsIn(['store', 'production', 'delivery', 'damage', 'return', 'stock'], { each: true })
+  availability?:string[]
 }

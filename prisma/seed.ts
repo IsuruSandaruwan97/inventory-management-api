@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 async function main() {
   const roles = [
     { name: 'admin', code: 'admin' },
-    { name: 'store_admin', code: 'store_admin' },
-    { name: 'stock_admin', code: 'stock_admin' },
-    { name: 'production_admin', code: 'production_admin' },
-    { name: 'delivery_admin', code: 'delivery_admin' },
+    { name: 'store_manager', code: 'store_manager' },
+    { name: 'stock_manager', code: 'stock_manager' },
+    { name: 'production_manager', code: 'production_manager' },
+    { name: 'delivery_manager', code: 'delivery_manager' },
     { name: 'user', code: 'user' },
   ];
 
@@ -22,7 +22,7 @@ async function main() {
     status: true,
     password: process.env.DEFAULT_PASSWORD,
     tmp_password: null,
-    pin_code: null,
+    pin_code: '2222',
     login_attempts: 0,
   }
 

@@ -14,11 +14,11 @@ export class ItemsService {
 
   async fetchItems(payload: CommonFilterDto): Promise<{ records: StockItems[], count: number }> {
     const filters: any = getFilters({ filters: payload, searchKeys: ['name', 'code'] });
+
     const records = await this.prismaService.stockItems.findMany({
       ...filters,
       include: {
         itemCategory: { select: { name: true, code: true } },
-        itemSubCategory: { select: { name: true, code: true, type: true } },
         updater: { select: { name: true } },
       },
     });
@@ -26,20 +26,32 @@ export class ItemsService {
     return { records, count };
   }
 
-  async fetchForDropdown(type:TStockSteps): Promise<{ label: string; value: number }[]> {
-    let subCategories = await this.prismaService.subCategory.findMany({
-      where: { type: { has: type } },
-      select: { id: true },
-    });
-    const subCategoriesIds = subCategories.map(item => item.id);
-    return await this.prismaService.stockItems.findMany({where:{sub_category:{in:subCategoriesIds}}})?.then(response => response.map(item => ({
-      label: item.name,
+  async fetchForDropdown(type: TStockSteps): Promise<{ label: string; value: number }[]> {
+    return await this.prismaService.stockItems.findMany({
+      where: {
+        availability:{
+          has:type
+        }
+      },include:{
+        itemCategory:{ select: { name: true } },
+      }
+    })?.then(response => response.map(item => ({
+      label: `${item.itemCategory.name} - ${item.name}`,
       value: item.id,
     })));
   }
 
-  async createItem(data: CreateItemDto): Promise<StockItems> {
-    return this.prismaService.stockItems.create({ data });
+
+  async createItem(payload: CreateItemDto): Promise<void> {
+    payload.availability = [...payload.availability, ...['return', 'damage']];
+    const categoryList = payload.category;
+    delete payload.category;
+    categoryList?.map(async category => {
+      const { code } = await this.prismaService.category.findFirst({ where: { id: category }, select: { code: true } });
+      if (!code) return null;
+      const data = { ...payload, code: (`${code}_${payload.code}`).toLowerCase(), category };
+      await this.prismaService.stockItems.create({ data });
+    });
   }
 
   async updateItem(data: UpdateStockItemDto, user?: string): Promise<StockItems> {

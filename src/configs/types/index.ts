@@ -18,3 +18,5 @@ export type TGetFilter = {
 export type TStockSteps = 'store'| 'production'| 'delivery'| 'stock'
 
 export type TStockStatus = 'pending'|'completed'|'return'|'damaged'
+
+export type TRole = 'admin' | 'user' | 'store_manager' | 'stock_manger' | 'production_manager' | 'delivery_manager';
