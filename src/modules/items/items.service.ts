@@ -26,7 +26,7 @@ export class ItemsService {
     return { records, count };
   }
 
-  async fetchForDropdown(type: TStockSteps): Promise<{ label: string; value: number }[]> {
+  async fetchForDropdown(type: TStockSteps): Promise<{ label: string; value: number,category:string }[]> {
     return await this.prismaService.stockItems.findMany({
       where: {
         availability:{
@@ -38,6 +38,7 @@ export class ItemsService {
     })?.then(response => response.map(item => ({
       label: `${item.itemCategory.name} - ${item.name}`,
       value: item.id,
+      category:item.itemCategory.name,
     })));
   }
 
