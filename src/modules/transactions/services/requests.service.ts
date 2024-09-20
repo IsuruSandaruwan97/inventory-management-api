@@ -6,7 +6,7 @@ import { getFilters } from '@common/utils/index.util';
 import dayjs from 'dayjs';
 import { StockRequestResponse } from '@modules/transactions/interface/request-response.interface';
 import { RequestDataDto } from '@modules/transactions/dto/request-data.dto';
-import { RequestItemsDto } from '@modules/transactions/dto/request-items.dto';
+import { RequestItemsDto } from '@modules/transactions/dto/request-items.dto'; 
 
 @Injectable()
 export class RequestsService {
@@ -84,6 +84,13 @@ export class RequestsService {
       where: { request_id: requestId, ...(id && { id }) },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async getPendingReqCount(): Promise<any> {
+    return this.prismaService.itemRequests.findMany({
+      where: { type: 'store', status: 1 },
+      distinct:['request_id'],
+    }).then(response=>response.length||0);
   }
 
   async getLastIndex(): Promise<number> {

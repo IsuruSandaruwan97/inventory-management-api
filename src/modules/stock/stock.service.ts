@@ -111,10 +111,11 @@ export class StockService {
     });
   }
 
-  async updateQuantity(item:number,type:TStockSteps,reduceQuantity:number,newType:TStockSteps,tmpAmount?:number):Promise<boolean|string>{
+  async updateQuantity(item:number,type:TStockSteps,reduceQuantity:number,newType:TStockSteps,isNewRecord:boolean=true,tmpAmount?:number):Promise<boolean|string>{
 
     let remainingQuantity = reduceQuantity;
     if(remainingQuantity<=0) {
+      if(!isNewRecord)return true
       await this.prismaService.stock.create({
         data:{
           item_id:item,
@@ -154,6 +155,6 @@ export class StockService {
         quantity:availableQuantity-reductionAmount
       }
     })
-    await this.updateQuantity(item,type, remainingQuantity-reductionAmount,newType,reduceQuantity);
+    await this.updateQuantity(item,type, remainingQuantity-reductionAmount,newType,isNewRecord,reduceQuantity);
   }
 }

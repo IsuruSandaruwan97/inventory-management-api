@@ -8,10 +8,14 @@ import { RequestItemsErrorType } from '@modules/stock/types/transactions-respons
 import { getDate } from '@common/utils/index.util';
 import { RequestActionDto } from '@modules/transactions/dto/request-action.dto';
 import { TStockSteps } from '@configs/types';
+import { MarkDamageItemsDto } from '@modules/transactions/dto/mark-damage-items.dto';
+import { PrismaService } from '@services/prisma.service';
 
 @Injectable()
 export class TransactionsService {
-  constructor(private readonly requestService: RequestsService, private readonly stockService: StockService) {
+  constructor(private readonly requestService: RequestsService,
+              private readonly stockService: StockService,
+              private readonly prismaService:PrismaService) {
   }
 
 
@@ -69,7 +73,7 @@ export class TransactionsService {
       }
 
       if (payload.action === 2) {
-       await this.stockService.updateQuantity(request.item_id, type, request?.quantity || 0,request.type as TStockSteps);
+       await this.stockService.updateQuantity(request.item_id, type, request?.quantity || 0,'production');
       }
       return await this.requestService.updateItem({
         ...request, ...(payload.action === 0 ? { reject_reason: payload.rejectReason } : { remark: payload.remark }),
@@ -80,5 +84,15 @@ export class TransactionsService {
       });
     }));
     return { status: true, errors };
+  }
+
+  async damageItems(data:MarkDamageItemsDto,user:string):Promise<any>{
+    const {item,type,...other} = data;
+    const quantityData = await this.stockService.getQuantityData(item,'production');
+    if(quantityData.quantity<data.quantity)throw new HttpException(ERROR_MESSAGES.INVALID_OPERATION,HttpStatus.BAD_REQUEST)
+    await this.stockService.updateQuantity(item, type as TStockSteps, other?.quantity || 0,'production',false);
+    await this.prismaService.damageItems.create({
+      data:{...other,item_id:item,userId:user,type:data.type as any}
+    })
   }
 }

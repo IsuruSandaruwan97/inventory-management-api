@@ -18,7 +18,8 @@ export const ERROR_MESSAGES = {
     STOCK_NOT_AVAILABLE:'Items not available in stock for your request!',
     REQUEST_NOT_FOUND:'Request not found!',
     ALREADY_APPROVED:'Request already approved or rejected!',
-  }
+  },
+  INVALID_OPERATION:"Invalid operation!"
 }
 
 export const PRISMA_ERROR_MESSAGES = {
