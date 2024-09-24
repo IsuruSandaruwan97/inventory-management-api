@@ -27,6 +27,12 @@ enum ProductionState {
   return
 }
 
+enum ItemType {
+  bottle
+  lid
+  label
+}
+
 model Users {
   id             String   @id @default(uuid()) @db.Uuid
   emp_id         String   @unique @map("emp_id")
@@ -89,6 +95,7 @@ model StockItems {
   category      Int            @map("category")
   description   String
   reorder_level Int
+  type          ItemType       @default(bottle)
   updatedBy     String?        @db.Uuid
   updatedAt     DateTime?
   createdAt     DateTime       @default(now())
@@ -167,4 +174,16 @@ model DamageItems {
   user Users      @relation("DamageItemUserRelation", fields: [userId], references: [id])
 
   @@map("damage_items")
+}
+
+model CompleteItems {
+  id        Int       @id @unique @default(autoincrement())
+  category  Int
+  item      Int[]     @default([])
+  quantity  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  userId    String    @db.Uuid
+
+  @@map("complete_items")
 }

@@ -7,6 +7,7 @@ import { ApiRequest, ApiResponseType } from '@configs/types/api-response.type';
 import { CommonFilterDto } from '@common/dto/index.dto';
 import { TStockStatus, TStockSteps } from '@configs/types';
 import { CreateStockDto } from '@modules/stock/dto/create-stock.dto';
+import { CompleteItemsDto } from '@modules/stock/dto/complete-items.dto';
 
 @Controller('stock')
 @ApiTags('Stock')
@@ -17,10 +18,9 @@ export class StockController {
   ) { }
   
   @Get(':type/:status')
-  async getAllByType(@Query() query:CommonFilterDto,@Param() params:{type:TStockSteps,status:TStockStatus}):Promise<ApiResponseType> {
+  async getAllByType(@Query() query:CommonFilterDto & {category:number},@Param() params:{type:TStockSteps,status:TStockStatus}):Promise<ApiResponseType> {
     return this.responseHandlerService.successResponse(await this.stockService.fetchItems(query,params.type,params.status));
   }
-
 
   @Post()
   async createItem(@Body() payload:CreateStockDto):Promise<ApiResponseType>{
@@ -30,5 +30,10 @@ export class StockController {
   @Put()
   async updateItem(@Body() payload:UpdateStockItemDto, @Req() req:ApiRequest):Promise<ApiResponseType> {
     return this.responseHandlerService.successResponse(await this.stockService.updateItem(payload,req.user.id))
+  }
+
+  @Post('complete')
+  async completeItems(@Body() body:CompleteItemsDto,@Req() req:ApiRequest):Promise<ApiResponseType> {
+    return this.responseHandlerService.successResponse(await this.stockService.completeItems(body,req.user.id))
   }
 }
