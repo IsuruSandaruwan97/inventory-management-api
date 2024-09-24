@@ -33,6 +33,11 @@ export class CreateItemDto {
   image?: string;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  type: 'bottle'|'lid'|'label';
+
+  @ApiProperty()
   @IsArray()
   category: number[];
 

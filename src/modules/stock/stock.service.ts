@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '@services/prisma.service';
 import { StockItems } from '@prisma/client';
 import { UpdateStockItemDto } from '@modules/items/dto/update-stock-item.dto';
@@ -6,6 +6,9 @@ import { CommonFilterDto } from '@common/dto/index.dto';
 import { getFilters } from '@common/utils/index.util';
 import { CreateStockDto } from '@modules/stock/dto/create-stock.dto';
 import { TStockStatus, TStockSteps } from '@configs/types';
+import isEmpty from 'lodash/isEmpty';
+import { CompleteItemsDto } from '@modules/stock/dto/complete-items.dto';
+import { ERROR_MESSAGES } from '@constants/errors.constants';
 
 @Injectable()
 export class StockService {
@@ -13,11 +16,15 @@ export class StockService {
   constructor(private readonly prismaService: PrismaService) {
   }
 
-  async fetchItems(payload: CommonFilterDto, type?: TStockSteps, status: TStockStatus = 'pending'): Promise<{
+  async fetchItems(payload: CommonFilterDto & {category:number}, type?: TStockSteps, status: TStockStatus = 'pending'): Promise<{
     records: StockItems[],
     count: number
   }> {
-    let filters: any = getFilters({ filters: payload, searchKeys: ['name', 'code'] });
+    let filters: any = !isEmpty(payload.category)? {
+      where:{
+        category:parseInt(String(payload.category))
+      }
+    }:getFilters({ filters: payload, searchKeys: ['name', 'code'] });
     filters.where.ItemQuantity = {
       some: {
         type,
@@ -157,4 +164,25 @@ export class StockService {
     })
     await this.updateQuantity(item,type, remainingQuantity-reductionAmount,newType,isNewRecord,reduceQuantity);
   }
+
+  async completeItems(payload:CompleteItemsDto,user:string):Promise<void> {
+    const itemIds = [payload.bottle,payload.label,payload.lid];
+    for (const id of itemIds) {
+      const { status, quantity } = await this.getQuantityData(id, 'production', 'pending');
+      if (!status || (status && quantity < payload.quantity)) {
+        throw new HttpException(ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE, HttpStatus.BAD_REQUEST);
+      }
+      await this.updateQuantity(id,'production',payload.quantity,'production',false);
+
+    }
+    await this.prismaService.completeItems.create({
+      data: {
+        category:payload.item,
+        item:itemIds,
+        quantity:payload.quantity,
+        userId:user
+      }
+    })
+  }
+
 }
