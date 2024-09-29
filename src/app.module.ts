@@ -15,16 +15,20 @@ import { LoggingInterceptor } from '@common/interceptors/logging.Interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { TransactionsModule } from '@modules/transactions/transactions.module';
-import { ItemsModule } from './modules/items/items.module';
+import { ItemsModule } from '@modules/items/items.module';
+
 
 
 @Module({
   imports: [ UsersModule, AuthModule, CategoriesModule, StockModule, CommonModule, TransactionsModule, ItemsModule],
   controllers: [AppController],
-  providers: [AppService,PrismaService,ErrorHandlerService,ResponseHandlerService, JwtService,ConfigService,{
+  providers: [AppService,
+    PrismaService,ErrorHandlerService,
+    ResponseHandlerService,
+    JwtService,ConfigService,{
     provide: APP_INTERCEPTOR,
     useClass: LoggingInterceptor,
-  }],
+  },],
 })
 export class AppModule implements NestModule {configure(consumer: MiddlewareConsumer) {
   consumer

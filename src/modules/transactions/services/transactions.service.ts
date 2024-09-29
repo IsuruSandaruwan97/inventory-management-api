@@ -10,12 +10,14 @@ import { RequestActionDto } from '@modules/transactions/dto/request-action.dto';
 import { TStockSteps } from '@configs/types';
 import { MarkDamageItemsDto } from '@modules/transactions/dto/mark-damage-items.dto';
 import { PrismaService } from '@services/prisma.service';
+import { SocketsGateway } from '@common/gateways/sockets.gateway';
 
 @Injectable()
 export class TransactionsService {
   constructor(private readonly requestService: RequestsService,
               private readonly stockService: StockService,
-              private readonly prismaService:PrismaService) {
+              private readonly prismaService: PrismaService,
+              private readonly socketsGateway:SocketsGateway) {
   }
 
 
@@ -37,7 +39,8 @@ export class TransactionsService {
       }
       await this.requestService.saveRequest({ ...item, userId: user, user_role: 1, request_id: requestId, status: 1 });
     }));
-
+    const reqCount = await this.requestService.getPendingReqCount();
+    if(reqCount && reqCount>0)this.socketsGateway.sendMessage(reqCount.toString())
     return { requestId, errors };
   }
 
@@ -46,11 +49,11 @@ export class TransactionsService {
     errors: RequestItemsErrorType
   }> {
     const errors: RequestItemsErrorType = [];
-    const type:TStockSteps = 'stock';
+    const type: TStockSteps = 'stock';
     const requests = await this.requestService.checkRequestAvailability(payload.requestId, payload.id);
     if (isEmpty(requests)) throw new HttpException(ERROR_MESSAGES.TRANSACTIONS.REQUEST_NOT_FOUND, HttpStatus.NOT_FOUND);
     await Promise.all(requests.map(async request => {
-      if(payload.action===0){
+      if (payload.action === 0) {
         return await this.requestService.updateItem({
           ...request, ...(payload.action === 0 ? { reject_reason: payload.rejectReason } : { remark: payload.remark }),
           action_taken: user,
@@ -73,7 +76,7 @@ export class TransactionsService {
       }
 
       if (payload.action === 2) {
-       await this.stockService.updateQuantity(request.item_id, type, request?.quantity || 0,'production');
+        await this.stockService.updateQuantity(request.item_id, type, request?.quantity || 0, 'production');
       }
       return await this.requestService.updateItem({
         ...request, ...(payload.action === 0 ? { reject_reason: payload.rejectReason } : { remark: payload.remark }),
@@ -83,16 +86,18 @@ export class TransactionsService {
         action_date: new Date(),
       });
     }));
+    const reqCount = await this.requestService.getPendingReqCount() || 0;
+    if(reqCount>=0)this.socketsGateway.sendMessage(reqCount.toString())
     return { status: true, errors };
   }
 
-  async damageItems(data:MarkDamageItemsDto,user:string):Promise<any>{
-    const {item,type,...other} = data;
-    const quantityData = await this.stockService.getQuantityData(item,'production');
-    if(quantityData.quantity<data.quantity)throw new HttpException(ERROR_MESSAGES.INVALID_OPERATION,HttpStatus.BAD_REQUEST)
-    await this.stockService.updateQuantity(item, type as TStockSteps, other?.quantity || 0,'production',false);
+  async damageItems(data: MarkDamageItemsDto, user: string): Promise<any> {
+    const { item, type, ...other } = data;
+    const quantityData = await this.stockService.getQuantityData(item, 'production');
+    if (quantityData.quantity < data.quantity) throw new HttpException(ERROR_MESSAGES.INVALID_OPERATION, HttpStatus.BAD_REQUEST);
+    await this.stockService.updateQuantity(item, type as TStockSteps, other?.quantity || 0, 'production', false);
     await this.prismaService.damageItems.create({
-      data:{...other,item_id:item,userId:user,type:data.type as any}
-    })
+      data: { ...other, item_id: item, userId: user, type: data.type as any },
+    });
   }
 }

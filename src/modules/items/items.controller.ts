@@ -1,4 +1,4 @@
-import { Body, Controller, Get,   Post, Put, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { CreateItemDto } from '@modules/items/dto/create-stock-item.dto';
 import { ApiRequest, ApiResponseType } from '@configs/types/api-response.type';
 import { UpdateStockItemDto } from '@modules/items/dto/update-stock-item.dto';
@@ -34,5 +34,15 @@ export class ItemsController {
   @Put()
   async updateItem(@Body() payload:UpdateStockItemDto, @Req() req:ApiRequest):Promise<ApiResponseType> {
     return this.responseHandlerService.successResponse(await this.itemService.updateItem(payload,req.user.id))
+  }
+
+  @Get('completed')
+  async getCompletedItems(@Query() query:CommonFilterDto):Promise<ApiResponseType> {
+    return this.responseHandlerService.successResponse(await this.itemService.fetchCompletedItems(query))
+  }
+
+  @Get('damaged/:type')
+  async getDamagedItems(@Query() query:CommonFilterDto,@Param() param:{type:TStockSteps}):Promise<ApiResponseType> {
+    return this.responseHandlerService.successResponse(await this.itemService.fetchDamagedItems(query,param.type))
   }
 }

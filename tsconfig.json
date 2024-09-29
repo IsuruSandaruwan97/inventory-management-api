@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "paths": {
+      "@src/*": ["src/*"],
       "@modules/*": ["src/modules/*"],
       "@filters/*": ["src/filters/*"],
       "@services/*": ["src/services/*"],

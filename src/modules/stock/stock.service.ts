@@ -9,6 +9,7 @@ import { TStockStatus, TStockSteps } from '@configs/types';
 import isEmpty from 'lodash/isEmpty';
 import { CompleteItemsDto } from '@modules/stock/dto/complete-items.dto';
 import { ERROR_MESSAGES } from '@constants/errors.constants';
+import map from 'lodash/map';
 
 @Injectable()
 export class StockService {
@@ -16,15 +17,17 @@ export class StockService {
   constructor(private readonly prismaService: PrismaService) {
   }
 
-  async fetchItems(payload: CommonFilterDto & {category:number}, type?: TStockSteps, status: TStockStatus = 'pending'): Promise<{
+  async fetchItems(payload: CommonFilterDto & {
+    category: number
+  }, type?: TStockSteps, status: TStockStatus = 'pending'): Promise<{
     records: StockItems[],
     count: number
   }> {
-    let filters: any = !isEmpty(payload.category)? {
-      where:{
-        category:parseInt(String(payload.category))
-      }
-    }:getFilters({ filters: payload, searchKeys: ['name', 'code'] });
+    let filters: any = !isEmpty(payload.category) ? {
+      where: {
+        category: parseInt(String(payload.category)),
+      },
+    } : getFilters({ filters: payload, searchKeys: ['name', 'code'] });
     filters.where.ItemQuantity = {
       some: {
         type,
@@ -38,7 +41,7 @@ export class StockService {
         itemCategory: { select: { name: true, code: true } },
 
         ItemQuantity: {
-          where: { quantity: { gt: 0 },type },
+          where: { quantity: { gt: 0 }, type },
           select: { quantity: true, type: true, unit_price: true, id: true, createdAt: true, updatedAt: true },
           orderBy: { id: 'desc' },
         },
@@ -73,7 +76,7 @@ export class StockService {
     quantity: number,
     name: string
   }> {
-    const {name,status} = await this.prismaService.stockItems.findFirstOrThrow({
+    const { name, status } = await this.prismaService.stockItems.findFirstOrThrow({
       where: { id },
       select: { name: true, status: true },
     });
@@ -118,71 +121,75 @@ export class StockService {
     });
   }
 
-  async updateQuantity(item:number,type:TStockSteps,reduceQuantity:number,newType:TStockSteps,isNewRecord:boolean=true,tmpAmount?:number):Promise<boolean|string>{
+  async updateQuantity(item: number, type: TStockSteps, reduceQuantity: number, newType: TStockSteps, isNewRecord: boolean = true, tmpAmount?: number): Promise<boolean | string> {
 
     let remainingQuantity = reduceQuantity;
-    if(remainingQuantity<=0) {
-      if(!isNewRecord)return true
+    if (remainingQuantity <= 0) {
+      if (!isNewRecord) return true;
       await this.prismaService.stock.create({
-        data:{
-          item_id:item,
-          quantity:tmpAmount,
-          type:newType,
-          production_state:'pending'
-        }
-      })
+        data: {
+          item_id: item,
+          quantity: tmpAmount,
+          type: newType,
+          production_state: 'pending',
+        },
+      });
       return true;
     }
-    const { availableQuantity,id} = await this.prismaService.stock.findFirst({
-      where:{
+    const { availableQuantity, id } = await this.prismaService.stock.findFirst({
+      where: {
         type,
-        item_id:item,
-        production_state:'pending',
-        quantity:{
-          gt:0
+        item_id: item,
+        production_state: 'pending',
+        quantity: {
+          gt: 0,
         },
-        item:{
-          status:true
-        }
-      },orderBy:{
-        createdAt:'asc'
-      },select:{
-        quantity:true,
-        id:true
-      }
-    })?.then(response=> ({
-      availableQuantity:response?.quantity || 0,
-      id:response.id
-    }))
+        item: {
+          status: true,
+        },
+      }, orderBy: {
+        createdAt: 'asc',
+      }, select: {
+        quantity: true,
+        id: true,
+      },
+    })?.then(response => ({
+      availableQuantity: response?.quantity || 0,
+      id: response.id,
+    }));
 
     const reductionAmount = Math.min(availableQuantity, remainingQuantity);
     await this.prismaService.stock.update({
-      where:{id},
-      data:{
-        quantity:availableQuantity-reductionAmount
-      }
-    })
-    await this.updateQuantity(item,type, remainingQuantity-reductionAmount,newType,isNewRecord,reduceQuantity);
+      where: { id },
+      data: {
+        quantity: availableQuantity - reductionAmount,
+      },
+    });
+    await this.updateQuantity(item, type, remainingQuantity - reductionAmount, newType, isNewRecord, reduceQuantity);
   }
 
-  async completeItems(payload:CompleteItemsDto,user:string):Promise<void> {
-    const itemIds = [payload.bottle,payload.label,payload.lid];
-    for (const id of itemIds) {
-      const { status, quantity } = await this.getQuantityData(id, 'production', 'pending');
-      if (!status || (status && quantity < payload.quantity)) {
-        throw new HttpException(ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE, HttpStatus.BAD_REQUEST);
-      }
-      await this.updateQuantity(id,'production',payload.quantity,'production',false);
+  async completeItems(payload: CompleteItemsDto, user: string): Promise<void> {
+    const itemIds = {
+      bottle: payload.bottle,
+      label: payload.label,
+      lid: payload.lid,
+    };
+    await Promise.all(map(itemIds, async (id,key) => {
+        const { status, quantity } = await this.getQuantityData(id, 'production', 'pending');
+        if (!status || (status && quantity < payload.quantity)) {
+          throw new HttpException(ERROR_MESSAGES.TRANSACTIONS.STOCK_NOT_AVAILABLE, HttpStatus.BAD_REQUEST);
+        }
+        await this.updateQuantity(id, 'production', payload.quantity, 'store',key==='bottle');
+    }))
 
-    }
     await this.prismaService.completeItems.create({
       data: {
-        category:payload.item,
-        item:itemIds,
-        quantity:payload.quantity,
-        userId:user
-      }
-    })
+        category: payload.item,
+        item: Object.values(itemIds),
+        quantity: payload.quantity,
+        userId: user,
+      },
+    });
   }
 
 }
