@@ -80,9 +80,10 @@ model Category {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  creator    Users        @relation("UsersCategoryCreatedBy", fields: [createdBy], references: [id])
-  updater    Users?       @relation("UsersCategoryUpdatedBy", fields: [updatedBy], references: [id])
-  StockItems StockItems[] @relation("ItemCategoryRelation")
+  creator       Users           @relation("UsersCategoryCreatedBy", fields: [createdBy], references: [id])
+  updater       Users?          @relation("UsersCategoryUpdatedBy", fields: [updatedBy], references: [id])
+  StockItems    StockItems[]    @relation("ItemCategoryRelation")
+  CompleteItems CompleteItems[] @relation("ItemCategoryRelation")
 
   @@map("category")
 }
@@ -184,6 +185,8 @@ model CompleteItems {
   createdAt DateTime  @default(now())
   updatedAt DateTime?
   userId    String    @db.Uuid
+
+  itemCategory Category @relation("ItemCategoryRelation", fields: [category], references: [id])
 
   @@map("complete_items")
 }
