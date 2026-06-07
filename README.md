@@ -1,85 +1,171 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📦 Inventory Management System — API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-ready REST API built with **NestJS**, **TypeScript**, and **PostgreSQL** for managing product inventory across multiple operational stages — from stock intake to delivery and returns. Features role-based access control, full audit trails, and a clean modular architecture.
 
-  <p align="center">Inventory Management System API built with NestJS, designed to handle product stock, tracking, and user roles. The API supports managing inventory across multiple stages, including stock, store, delivery, and returns, with integrated role-based access control and a PostgreSQL database using Prisma ORM.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+> 🔗 **Frontend Dashboard**: [inventory-management-dashboard](https://github.com/IsuruSandaruwan97/inventory-management-dashboard)
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ✨ Features
 
-## Project setup
+- **Multi-stage inventory tracking** — stock → store → delivery → returns
+- **Role-based access control (RBAC)** — admin, manager, and staff roles with granular permissions
+- **Product & category management** — full CRUD with stock level monitoring
+- **Real-time stock updates** — track quantities across all warehouse stages
+- **Audit logging** — complete history of every inventory movement
+- **Secure authentication** — JWT-based auth with refresh tokens
+- **Database migrations** — fully managed via Prisma ORM
+- **API documentation** — Swagger UI available at `/api/docs`
 
-```bash
-$ yarn install
-```
+---
 
-## Compile and run the project
+## 🛠 Tech Stack
 
-```bash
-# development
-$ yarn run start
+| Layer      | Technology       |
+| ---------- | ---------------- |
+| Framework  | NestJS (Node.js) |
+| Language   | TypeScript       |
+| Database   | PostgreSQL       |
+| ORM        | Prisma           |
+| Auth       | JWT + bcrypt     |
+| Validation | class-validator  |
+| Testing    | Jest             |
+| CI/CD      | GitHub Actions   |
 
-# watch mode
-$ yarn run start:dev
+---
 
-# production mode
-$ yarn run start:prod
-```
+## 🚀 Getting Started
 
-## Run tests
+### Prerequisites
+
+- Node.js v18+
+- PostgreSQL 14+
+- Yarn
+
+### Installation
 
 ```bash
-# unit tests
-$ yarn run test
+# Clone the repository
+git clone https://github.com/IsuruSandaruwan97/inventory-management-api.git
+cd inventory-management-api
 
-# e2e tests
-$ yarn run test:e2e
+# Install dependencies
+yarn install
 
-# test coverage
-$ yarn run test:cov
+# Copy environment variables
+cp .env.example .env
 ```
 
-## Resources
+### Environment Variables
 
-Check out a few resources that may come in handy when working with NestJS:
+Create a `.env` file in the root directory:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/inventory_db"
+JWT_SECRET="your-super-secret-key"
+JWT_EXPIRES_IN="7d"
+PORT=3000
+```
 
-## Support
+### Database Setup
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+# Run Prisma migrations
+npx prisma migrate dev
 
-## Stay in touch
+# Seed initial data (optional)
+npx prisma db seed
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Running the App
 
-## License
+```bash
+# Development mode (with hot reload)
+yarn start:dev
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Production mode
+yarn start:prod
+```
+
+### Running Tests
+
+```bash
+# Unit tests
+yarn test
+
+# End-to-end tests
+yarn test:e2e
+
+# Test coverage report
+yarn test:cov
+```
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── auth/               # Authentication & JWT guards
+├── users/              # User management & roles
+├── products/           # Product CRUD & categories
+├── inventory/          # Stock tracking & movements
+├── store/              # Store-level inventory
+├── delivery/           # Delivery management
+├── returns/            # Return processing
+├── prisma/             # Prisma service & schema
+└── common/             # Shared decorators, guards, filters
+```
+
+---
+
+## 🔐 API Endpoints (Key Routes)
+
+```
+POST   /auth/login              # Login & receive JWT
+POST   /auth/refresh            # Refresh access token
+
+GET    /products                # List all products
+POST   /products                # Create product (admin/manager)
+PATCH  /products/:id            # Update product
+DELETE /products/:id            # Delete product (admin only)
+
+GET    /inventory               # Current stock levels
+POST   /inventory/transfer      # Move stock between stages
+GET    /inventory/movements     # Audit log of all movements
+
+GET    /users                   # List users (admin only)
+POST   /users                   # Create user with role
+```
+
+Full API documentation available via Swagger at `http://localhost:3000/api/docs`
+
+---
+
+## 👤 User Roles
+
+| Role        | Permissions                                       |
+| ----------- | ------------------------------------------------- |
+| **Admin**   | Full access — users, products, inventory, reports |
+| **Manager** | Products, inventory transfers, view reports       |
+| **Staff**   | View inventory, process deliveries and returns    |
+
+---
+
+## 🧪 Test Coverage
+
+```bash
+yarn test:cov
+```
+
+---
+
+## 🤝 Related Repository
+
+- **Dashboard UI**: [inventory-management-dashboard](https://github.com/IsuruSandaruwan97/inventory-management-dashboard) — React + TypeScript frontend for this API
+
+---
+
+## 📄 License
+
+MIT License — feel free to use this as a reference or starting point for your own projects.
